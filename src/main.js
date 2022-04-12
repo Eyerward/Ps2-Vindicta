@@ -11,6 +11,6 @@ let gameConfig = {
             debug: false,
         },
     },
-    scene: new
+    scene: new scene()
 };
 let game = new Phaser.Game(gameConfig);
