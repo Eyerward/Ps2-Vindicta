@@ -1,0 +1,23 @@
+body{
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    background-color: #000000;
+    text-align: center;
+}
+a {
+    color: #ffffff;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color 1s;
+}
+#game{
+    margin-bottom: 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh;
+
+}
+canvas{
+    outline: 1px solid #333;
+}
