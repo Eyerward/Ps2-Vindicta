@@ -27,13 +27,6 @@ class scene extends Phaser.Scene {
         const platforms = map.createStaticLayer('Platforms', tileset, 0, -1000);
 
 
-        this.player = this.physics.add.sprite(100, 1000, 'player');
-        //Taille de la hitbox du Player
-        this.player.body.setSize(this.player.width-20, this.player.height-20).setOffset(10, 20);
-        //this.player.setBounce(0.1);
-        this.player.setCollideWorldBounds(false);
-
-        this.cameras.main.startFollow(this.player,true,1,1,-100,0)
 
         //COLLISIONS
         this.sol = this.physics.add.group({
@@ -44,7 +37,9 @@ class scene extends Phaser.Scene {
             const solSprite = this.physics.add.sprite(sol.x+(sol.width*0.5),sol.y + (sol.height*0.5)-1000).setSize(sol.width,sol.height);
             this.sol.add(solSprite);
         });
-        this.physics.add.collider(this.player, this.sol);
+
+        this.player = new Player(this);
+        this.cameras.main.startFollow(this.player.player,true,0.1,0.05,-100,0);
 
     }
     update(){
