@@ -8,7 +8,7 @@
          "encoding":"base64",
          "height":50,
          "id":1,
-         "name":"platforms",
+         "name":"Platforms",
          "opacity":1,
          "type":"tilelayer",
          "visible":true,
