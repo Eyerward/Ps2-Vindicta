@@ -49,15 +49,16 @@ class Player {
             frameRate: 10,
         });
 
+        this.player.jumping = false;
+
         this.scene.physics.add.collider(this.player, this.scene.sol);
 
     }
 
 
     jump(){
-
-        this.player.setVelocityY(-800);
         this.player.play('jump', true);
+        this.player.setVelocityY(-800);
         console.log(this.player.key)
     }
     moveRight(){
@@ -72,11 +73,8 @@ class Player {
         if (this.player.body.onFloor()) {
             this.player.play('walk', true)}
     }
-    stop(){
+    noMove(){
         this.player.setVelocityX(0);
-        if (this.player.body.onFloor()) {
-            this.player.play('idle',true)
-        }
     }
 
 }

@@ -41,8 +41,62 @@ class scene extends Phaser.Scene {
         this.player = new Player(this);
         this.cameras.main.startFollow(this.player.player,true,0.1,0.05,-100,0);
 
+        this.initKeyboard();
+    }
+
+    initKeyboard()
+    {
+        let me = this;
+
+        this.input.keyboard.on('keydown', function(kevent)
+        {
+            switch (kevent.keyCode)
+            {
+                case Phaser.Input.Keyboard.KeyCodes.D:
+                    me.rightLad = true;
+                    me.player.moveRight();
+                    break;
+                case Phaser.Input.Keyboard.KeyCodes.Q:
+                    me.leftLad = true;
+                    me.player.moveLeft();
+                    break;
+                case Phaser.Input.Keyboard.KeyCodes.Z:
+                    me.upLad = true;
+                    if (me.player.player.body.onFloor()) {
+                        me.player.jump();
+                    }
+                    break;
+                case Phaser.Input.Keyboard.KeyCodes.S:
+                    me.downLad = true;
+                    break;
+            }
+        });
+        this.input.keyboard.on('keyup', function(kevent)
+        {
+            switch (kevent.keyCode) {
+                case Phaser.Input.Keyboard.KeyCodes.D:
+                    me.rightLad = false;
+                    me.player.noMove();
+
+                    break;
+                case Phaser.Input.Keyboard.KeyCodes.Q:
+                    me.leftLad = false;
+                    me.player.noMove();
+                    break;
+                case Phaser.Input.Keyboard.KeyCodes.Z:
+                    me.upLad = false;
+                    break;
+                case Phaser.Input.Keyboard.KeyCodes.S:
+                    me.downLad = false;
+                    break;
+            }
+        });
     }
     update(){
-
+        if (this.player.player.body.velocity.x === 0 && this.player.player.body.onFloor()) {
+            this.player.player.play('idle',true);
+        }
+        /*if (this.player.player.body.onFloor()){
+        }*/
     }
 }
