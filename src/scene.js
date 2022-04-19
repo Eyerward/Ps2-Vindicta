@@ -102,9 +102,13 @@ class scene extends Phaser.Scene {
         }
 
         //SAUT
+        if (this.player.player.body.velocity.y < 0){
+            this.player.player.jumping =true;
+            console.log('Jumping');
+        }
         if (this.player.player.body.velocity.y > 0){
             this.player.player.falling = true;
-            console.log(this.player.player.falling);
+            console.log('Falling');
         }
 
         if (this.player.player.body.velocity.x != 0 && this.player.player.body.onFloor() && this.player.player.falling){
