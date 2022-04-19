@@ -93,10 +93,15 @@ class scene extends Phaser.Scene {
         });
     }
     update(){
+
+        /**QUELQUES CONDITIONS D'ANIMATION**/
+
+        //IDLE
         if (this.player.player.body.velocity.x === 0 && this.player.player.body.onFloor()) {
             this.player.player.play('idle',true);
         }
 
+        //SAUT
         if (this.player.player.body.velocity.y > 0){
             this.player.player.falling = true;
             console.log(this.player.player.falling);

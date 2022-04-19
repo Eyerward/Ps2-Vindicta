@@ -52,14 +52,8 @@ class Player {
         this.player.jumping = false;
         this.player.falling = false;
         this.scene.physics.add.collider(this.player, this.scene.sol);
-        this.scene.physics.add.overlap(this.player, this.scene.sol, this.auSol, null, this);
-
     }
 
-    auSol(){
-        this.player.falling = false;
-        console.log(this.player.falling);
-    }
 
 
     jump(){
