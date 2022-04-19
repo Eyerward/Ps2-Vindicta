@@ -96,7 +96,14 @@ class scene extends Phaser.Scene {
         if (this.player.player.body.velocity.x === 0 && this.player.player.body.onFloor()) {
             this.player.player.play('idle',true);
         }
-        /*if (this.player.player.body.onFloor()){
-        }*/
+
+        if (this.player.player.body.velocity.y > 0){
+            this.player.player.falling = true;
+            console.log(this.player.player.falling);
+        }
+
+        if (this.player.player.body.velocity.x != 0 && this.player.player.body.onFloor() && this.player.player.falling){
+            this.player.player.play('walk',true);
+        }
     }
 }
