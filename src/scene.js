@@ -26,8 +26,6 @@ class scene extends Phaser.Scene {
         const tileset = map.addTilesetImage('kenney_tryout', 'tiles');
         const platforms = map.createStaticLayer('Platforms', tileset, 0, -1000);
 
-
-
         //COLLISIONS
         this.sol = this.physics.add.group({
             allowGravity: false,
@@ -38,10 +36,48 @@ class scene extends Phaser.Scene {
             this.sol.add(solSprite);
         });
 
+
+        /*******GAME OBJECTS*******/
+        //ECHELLE
+        this.ladder = this.physics.add.group({
+            allowGravity: false,
+            immovable: true
+        });
+        map.getObjectLayer('Ladder').objects.forEach((ladder) => {
+            // Add new spikes to our sprite group
+            const ladderSprite = this.ladder.create(ladder.x,ladder.y - 1000 - ladder.height, 'ladder').setOrigin(0);
+            ladderSprite.body.setSize(ladder.width-50, ladder.height).setOffset(25, 0);
+        });
+
+        //SORTIE DE L'ECHELLE
+        this.outLad = this.physics.add.group({
+            allowGravity: false,
+            immovable: true
+        });
+        map.getObjectLayer('OutOfLAdder').objects.forEach((outLad) => {
+            const outLadSprite = this.physics.add.sprite(outLad.x+(outLad.width*0.5),outLad.y + (outLad.height*0.5)-1000).setSize(outLad.width,outLad.height);
+            this.outLad.add(outLadSprite);
+        });
+
+
+        /****INITIALIZING THE PLAYER*****/
         this.player = new Player(this);
         this.cameras.main.startFollow(this.player.player,true,0.1,0.05,-100,0);
 
+        /*****GLOBAL OVERLAPS BETWEEN OBJECTS*****/
+        this.physics.add.overlap(this.player.player,this.ladder, this.climb.bind(this), null, this);
+        this.physics.add.overlap(this.player.player,this.outLad, this.notClimb.bind(this), null, this);
+
+        /**INPUT MOVEMENTS**/
         this.initKeyboard();
+    }
+
+    climb(player, ladder){
+        this.player.player.onLadder = true;
+        this.player.player.climbing = true;
+    }
+    notClimb(player,outLad){
+        this.player.player.climbing = false
     }
 
     initKeyboard()
@@ -113,6 +149,46 @@ class scene extends Phaser.Scene {
 
         if (this.player.player.body.velocity.x != 0 && this.player.player.body.onFloor() && this.player.player.falling){
             this.player.player.play('walk',true);
+        }
+
+        /**CONDITIONS POUR GRIMPER**/
+        if(this.player.player.onLadder)
+        {
+            this.player.player.onLadder = false;
+            if (this.upLad)
+            {
+                this.player.player.setVelocityY(-400);
+                this.player.player.body.setAllowGravity(true);
+            }
+            else if (this.downLad)
+            {
+                this.player.player.setVelocityY(400);
+                this.player.player.body.setAllowGravity(true);
+            }
+            else {
+                this.player.player.setVelocityY(0);
+                this.player.player.body.setAllowGravity(false);
+
+            }
+
+            if (!this.player.player.onLadder){
+                if (this.downLad || this.upLad || this.rightLad || this.leftLad){
+                    this.player.player.body.setAllowGravity(true);
+                }
+            }
+
+
+        }
+
+        if(this.player.player.climbing){
+            console.log('climbing');
+            if(this.player.player.body.velocity.y != 0){
+                this.player.player.play('climb',true);
+            }
+            else {
+                this.player.player.play('climbidle',true);
+
+            }
         }
     }
 }
