@@ -4,7 +4,7 @@ class Player {
         this.scene = scene;
 
 
-        this.player = this.scene.physics.add.sprite(100, 1000, 'player');
+        this.player = this.scene.physics.add.sprite(100, 2500, 'player');
         //Taille de la hitbox du Player
         this.player.body.setSize(this.player.width-60, this.player.height).setOffset(30, 0);
 
@@ -59,17 +59,17 @@ class Player {
 
     jump(){
         //this.player.play('jump', true);
-        this.player.setVelocityY(-1000);
+        this.player.setVelocityY(-1300);
         console.log(this.player.key)
     }
     moveRight(){
-        this.player.setVelocityX(300);
+        this.player.setVelocityX(500);
         this.player.setFlipX(false);
         if (this.player.body.onFloor()) {
             this.player.play('run', true)}
     }
     moveLeft(){
-        this.player.setVelocityX(-300);
+        this.player.setVelocityX(-500);
         this.player.setFlipX(true);
         if (this.player.body.onFloor()) {
             this.player.play('run', true)}

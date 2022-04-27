@@ -19,12 +19,12 @@ class scene extends Phaser.Scene {
 
         /**PRESETS**/
             //BG et Map
-        const backgroundImage = this.add.image(0, 500,'background').setOrigin(0, 0);
-        backgroundImage.setScale(3, 1.5);
+        const backgroundImage = this.add.image(0, 1000,'background').setOrigin(0, 0);
+        backgroundImage.setScale(3, 2.5);
 
         const map = this.make.tilemap({ key: 'tryout' });
         const tileset = map.addTilesetImage('kenney_tryout', 'tiles');
-        const platforms = map.createStaticLayer('Platforms', tileset, 0, -1000);
+        const platforms = map.createStaticLayer('Platforms', tileset, 0, 0);
 
         //COLLISIONS
         this.sol = this.physics.add.group({
@@ -32,7 +32,7 @@ class scene extends Phaser.Scene {
             immovable: true
         });
         map.getObjectLayer('Collisions').objects.forEach((sol) => {
-            const solSprite = this.physics.add.sprite(sol.x+(sol.width*0.5),sol.y + (sol.height*0.5)-1000).setSize(sol.width,sol.height);
+            const solSprite = this.physics.add.sprite(sol.x+(sol.width*0.5),sol.y + (sol.height*0.5)).setSize(sol.width,sol.height);
             this.sol.add(solSprite);
         });
 
@@ -45,7 +45,7 @@ class scene extends Phaser.Scene {
         });
         map.getObjectLayer('Ladder').objects.forEach((ladder) => {
             // Add new spikes to our sprite group
-            const ladderSprite = this.ladder.create(ladder.x,ladder.y - 1000 - ladder.height, 'ladder').setOrigin(0);
+            const ladderSprite = this.ladder.create(ladder.x,ladder.y - ladder.height, 'ladder').setOrigin(0);
             ladderSprite.body.setSize(ladder.width-50, ladder.height).setOffset(25, 0);
         });
 
@@ -54,8 +54,8 @@ class scene extends Phaser.Scene {
             allowGravity: false,
             immovable: true
         });
-        map.getObjectLayer('OutOfLAdder').objects.forEach((outLad) => {
-            const outLadSprite = this.physics.add.sprite(outLad.x+(outLad.width*0.5),outLad.y + (outLad.height*0.5)-1000).setSize(outLad.width,outLad.height);
+        map.getObjectLayer('OutOfLadder').objects.forEach((outLad) => {
+            const outLadSprite = this.physics.add.sprite(outLad.x+(outLad.width*0.5),outLad.y + (outLad.height*0.5)).setSize(outLad.width,outLad.height);
             this.outLad.add(outLadSprite);
         });
 

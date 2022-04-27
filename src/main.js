@@ -7,8 +7,8 @@ let gameConfig = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: {y: 2500},
-            debug: true,
+            gravity: {y: 3000},
+            //debug: true,
         },
     },
     scene: new scene()
