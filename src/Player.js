@@ -6,27 +6,27 @@ class Player {
 
         this.player = this.scene.physics.add.sprite(100, 1000, 'player');
         //Taille de la hitbox du Player
-        this.player.body.setSize(this.player.width, this.player.height+20).setOffset(0, -20);
+        this.player.body.setSize(this.player.width-60, this.player.height).setOffset(30, 0);
 
         /***Animations***/
         //WALK
         this.scene.anims.create({
-            key: 'walk',
+            key: 'run',
             frames: this.scene.anims.generateFrameNames('player', {
-                prefix: 'robo_player_',
-                start: 2,
-                end: 3,
+                prefix: 'reagan_run_',
+                start: 0,
+                end: 9,
             }),
-            frameRate: 10,
+            frameRate: 16,
             repeat: -1
         });
         //IDLE
         this.scene.anims.create({
             key: 'idle',
-            frames: [{ key: 'player', frame: 'robo_player_0' }],
+            frames: [{ key: 'player', frame: 'reagan_idle' }],
             frameRate: 10,
         });
-        //JUMP
+       /** //JUMP
         this.scene.anims.create({
             key: 'jump',
             frames: [{ key: 'player', frame: 'robo_player_1' }],
@@ -47,7 +47,7 @@ class Player {
             key: 'climbidle',
             frames: [{ key: 'player', frame: 'robo_player_4' }],
             frameRate: 10,
-        });
+        });**/
 
         this.player.jumping = false;
         this.player.falling = false;
@@ -58,7 +58,7 @@ class Player {
 
 
     jump(){
-        this.player.play('jump', true);
+        //this.player.play('jump', true);
         this.player.setVelocityY(-1000);
         console.log(this.player.key)
     }
@@ -66,13 +66,13 @@ class Player {
         this.player.setVelocityX(300);
         this.player.setFlipX(false);
         if (this.player.body.onFloor()) {
-            this.player.play('walk', true)}
+            this.player.play('run', true)}
     }
     moveLeft(){
         this.player.setVelocityX(-300);
         this.player.setFlipX(true);
         if (this.player.body.onFloor()) {
-            this.player.play('walk', true)}
+            this.player.play('run', true)}
     }
     noMove(){
         this.player.setVelocityX(0);

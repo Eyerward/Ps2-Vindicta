@@ -10,7 +10,7 @@ class scene extends Phaser.Scene {
         this.load.image('save_on', 'assets/images/save_on.png');
         this.load.image('save_on', 'assets/images/save_on.png');
         //Appel du spritesheet du joueur avec sa ref JSON
-        this.load.atlas('player', 'assets/images/kenney_player.png','assets/images/kenney_player_atlas.json');
+        this.load.atlas('player', 'assets/images/reagan_player.png','assets/images/reagan_player_atlas.json');
         //Appel de la map Tiled et de ses tuiles
         this.load.image('tiles','assets/tileset/platformPack_tilesheet.png')
         this.load.tilemapTiledJSON('tryout','assets/maps/tryout.json');
@@ -148,7 +148,7 @@ class scene extends Phaser.Scene {
         }
 
         if (this.player.player.body.velocity.x != 0 && this.player.player.body.onFloor() && this.player.player.falling){
-            this.player.player.play('walk',true);
+            this.player.player.play('run',true);
         }
 
         /**CONDITIONS POUR GRIMPER**/
@@ -179,7 +179,7 @@ class scene extends Phaser.Scene {
 
 
         }
-
+        /**
         if(this.player.player.climbing){
             console.log('climbing');
             if(this.player.player.body.velocity.y != 0){
@@ -189,6 +189,6 @@ class scene extends Phaser.Scene {
                 this.player.player.play('climbidle',true);
 
             }
-        }
+        }**/
     }
 }
