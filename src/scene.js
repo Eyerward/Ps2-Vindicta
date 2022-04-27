@@ -19,7 +19,7 @@ class scene extends Phaser.Scene {
 
         /**PRESETS**/
             //BG et Map
-        const backgroundImage = this.add.image(0, 1000,'background').setOrigin(0, 0);
+        const backgroundImage = this.add.image(0, 500,'background').setOrigin(0, 0);
         backgroundImage.setScale(3, 2.5);
 
         const map = this.make.tilemap({ key: 'tryout' });
@@ -62,7 +62,7 @@ class scene extends Phaser.Scene {
 
         /****INITIALIZING THE PLAYER*****/
         this.player = new Player(this);
-        this.cameras.main.startFollow(this.player.player,true,0.1,0.05,-100,0);
+        this.cameras.main.startFollow(this.player.player,true,0.1,0.04,-100,0);
 
         /*****GLOBAL OVERLAPS BETWEEN OBJECTS*****/
         this.physics.add.overlap(this.player.player,this.ladder, this.climb.bind(this), null, this);

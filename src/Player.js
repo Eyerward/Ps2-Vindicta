@@ -6,7 +6,7 @@ class Player {
 
         this.player = this.scene.physics.add.sprite(100, 2500, 'player');
         //Taille de la hitbox du Player
-        this.player.body.setSize(this.player.width-60, this.player.height).setOffset(30, 0);
+        this.player.body.setSize(this.player.width-70, this.player.height).setOffset(35, 0);
 
         /***Animations***/
         //WALK
