@@ -1,6 +1,6 @@
 class scene extends Phaser.Scene {
     preload(){
-        this.load.image('background', 'assets/images/background.png');
+        this.load.image('background', 'assets/images/bg_parallaxe.png');
         this.load.image('diamond_blue', 'assets/images/diamond_blue.png');
         this.load.image('diamond_red', 'assets/images/diamond_red.png');
         this.load.image('enemy_blade', 'assets/images/enemy_blade.png');
@@ -12,18 +12,18 @@ class scene extends Phaser.Scene {
         //Appel du spritesheet du joueur avec sa ref JSON
         this.load.atlas('player', 'assets/images/reagan_player.png','assets/images/reagan_player_atlas.json');
         //Appel de la map Tiled et de ses tuiles
-        this.load.image('tiles','assets/tileset/platformPack_tilesheet.png')
-        this.load.tilemapTiledJSON('tryout','assets/maps/tryout.json');
+        this.load.image('tiles','assets/tileset/Platform_Vindicta_v1.png')
+        this.load.tilemapTiledJSON('map_0','assets/maps/map_0.json');
     }
     create(){
 
         /**PRESETS**/
             //BG et Map
         const backgroundImage = this.add.image(0, 500,'background').setOrigin(0, 0);
-        backgroundImage.setScale(3, 2.5);
+        backgroundImage.setScale(1, 1);
 
-        const map = this.make.tilemap({ key: 'tryout' });
-        const tileset = map.addTilesetImage('kenney_tryout', 'tiles');
+        const map = this.make.tilemap({ key: 'map_0' });
+        const tileset = map.addTilesetImage('vindicta_platforms', 'tiles');
         const platforms = map.createStaticLayer('Platforms', tileset, 0, 0);
 
         //COLLISIONS
