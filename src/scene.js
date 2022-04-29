@@ -20,10 +20,8 @@ class scene extends Phaser.Scene {
         /**PRESETS**/
         //BG parallaxe et Map
 
-        this.background = this.physics.add.image(-100, 4500,'background').setOrigin(0, 0);
+        this.background = this.add.image(-100, 4500,'background').setOrigin(0, 0);
         this.background.setScale(1.5, 1.5);
-        this.background.body.setAllowGravity(false);
-        this.background.setImmovable(true);
 
         const map = this.make.tilemap({ key: 'map_0' });
         const tileset = map.addTilesetImage('vindicta_platforms', 'tiles');
@@ -138,15 +136,12 @@ class scene extends Phaser.Scene {
 
         //Parallaxe en X
 
-        if (this.player.player.body.velocity.x > 0){
-            this.background.setVelocityX(400);
+        /**if (this.player.player.body.velocity.x > 0){
         }
         else if (this.player.player.body.velocity.x < 0){
-            this.background.setVelocityX(-400);
         }
         else {
-            this.background.setVelocityX(0);
-        }
+        }**/
 
         //IDLE
         if (this.player.player.body.velocity.x === 0 && this.player.player.body.onFloor()) {
@@ -155,17 +150,12 @@ class scene extends Phaser.Scene {
 
         //SAUT
         if (this.player.player.body.velocity.y < 0){
-            this.background.setVelocityY(-10);
             this.player.player.jumping =true;
             console.log('Jumping');
         }
         else if (this.player.player.body.velocity.y > 0){
-            this.background.setVelocityY(10);
             this.player.player.falling = true;
             console.log('Falling');
-        }
-        else {
-            this.background.setVelocityY(0);
         }
 
         if (this.player.player.body.velocity.x != 0 && this.player.player.body.onFloor() && this.player.player.falling){
