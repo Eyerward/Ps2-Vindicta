@@ -18,9 +18,12 @@ class scene extends Phaser.Scene {
     create(){
 
         /**PRESETS**/
-            //BG et Map
-        const backgroundImage = this.add.image(0, 500,'background').setOrigin(0, 0);
-        backgroundImage.setScale(1, 1);
+        //BG parallaxe et Map
+
+        this.background = this.physics.add.image(-100, 4500,'background').setOrigin(0, 0);
+        this.background.setScale(1.5, 1.5);
+        this.background.body.setAllowGravity(false);
+        this.background.setImmovable(true);
 
         const map = this.make.tilemap({ key: 'map_0' });
         const tileset = map.addTilesetImage('vindicta_platforms', 'tiles');
@@ -70,6 +73,7 @@ class scene extends Phaser.Scene {
 
         /**INPUT MOVEMENTS**/
         this.initKeyboard();
+
     }
 
     climb(player, ladder){
@@ -130,7 +134,19 @@ class scene extends Phaser.Scene {
     }
     update(){
 
-        /**QUELQUES CONDITIONS D'ANIMATION**/
+        /**QUELQUES CONDITIONS D'ANIMATION AVEC CONDITIONS DE PARALLAXE**/
+
+        //Parallaxe en X
+
+        if (this.player.player.body.velocity.x > 0){
+            this.background.setVelocityX(400);
+        }
+        else if (this.player.player.body.velocity.x < 0){
+            this.background.setVelocityX(-400);
+        }
+        else {
+            this.background.setVelocityX(0);
+        }
 
         //IDLE
         if (this.player.player.body.velocity.x === 0 && this.player.player.body.onFloor()) {
@@ -139,17 +155,23 @@ class scene extends Phaser.Scene {
 
         //SAUT
         if (this.player.player.body.velocity.y < 0){
+            this.background.setVelocityY(-10);
             this.player.player.jumping =true;
             console.log('Jumping');
         }
-        if (this.player.player.body.velocity.y > 0){
+        else if (this.player.player.body.velocity.y > 0){
+            this.background.setVelocityY(10);
             this.player.player.falling = true;
             console.log('Falling');
+        }
+        else {
+            this.background.setVelocityY(0);
         }
 
         if (this.player.player.body.velocity.x != 0 && this.player.player.body.onFloor() && this.player.player.falling){
             this.player.player.play('run',true);
         }
+
 
         /**CONDITIONS POUR GRIMPER**/
         if(this.player.player.onLadder)
