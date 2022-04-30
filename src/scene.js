@@ -12,20 +12,23 @@ class scene extends Phaser.Scene {
         //Appel du spritesheet du joueur avec sa ref JSON
         this.load.atlas('player', 'assets/images/reagan_player.png','assets/images/reagan_player_atlas.json');
         //Appel de la map Tiled et de ses tuiles
-        this.load.image('tiles','assets/tileset/Platform_Vindicta_v1.png')
+        this.load.image('tiles','assets/tileset/platform_vindicta_v2.png')
         this.load.tilemapTiledJSON('map_0','assets/maps/map_0.json');
     }
     create(){
 
         /**PRESETS**/
         //BG parallaxe et Map
+        this.parallaxe = this.add.container(0,0);
 
         this.background = this.add.image(-100, 4500,'background').setOrigin(0, 0);
         this.background.setScale(1.5, 1.5);
 
         const map = this.make.tilemap({ key: 'map_0' });
         const tileset = map.addTilesetImage('vindicta_platforms', 'tiles');
+        const grotte = map.createStaticLayer('Grotte', tileset, 0, 0);
         const platforms = map.createStaticLayer('Platforms', tileset, 0, 0);
+        const staticObjects = map.createStaticLayer('StaticObjects', tileset, 0, 0);
 
         //COLLISIONS
         this.sol = this.physics.add.group({
@@ -45,10 +48,19 @@ class scene extends Phaser.Scene {
             immovable: true
         });
         map.getObjectLayer('Ladder').objects.forEach((ladder) => {
+            const ladderSprite = this.physics.add.sprite(ladder.x+(ladder.width*0.5),ladder.y+(ladder.height*0.5)).setSize(ladder.width,ladder.height);
+            this.ladder.add(ladderSprite);
+        });
+
+        /**this.ladder = this.physics.add.group({
+            allowGravity: false,
+            immovable: true
+        });
+        map.getObjectLayer('Ladder').objects.forEach((ladder) => {
             // Add new spikes to our sprite group
             const ladderSprite = this.ladder.create(ladder.x,ladder.y - ladder.height, 'ladder').setOrigin(0);
             ladderSprite.body.setSize(ladder.width-50, ladder.height).setOffset(25, 0);
-        });
+        });**/
 
         //SORTIE DE L'ECHELLE
         this.outLad = this.physics.add.group({
@@ -63,7 +75,7 @@ class scene extends Phaser.Scene {
 
         /****INITIALIZING THE PLAYER*****/
         this.player = new Player(this);
-        this.cameras.main.startFollow(this.player.player,true,0.1,0.04,-100,0);
+        this.cameras.main.startFollow(this.player.player,true,0.5,0.04,-100,100);
 
         /*****GLOBAL OVERLAPS BETWEEN OBJECTS*****/
         this.physics.add.overlap(this.player.player,this.ladder, this.climb.bind(this), null, this);
@@ -136,12 +148,18 @@ class scene extends Phaser.Scene {
 
         //Parallaxe en X
 
-        /**if (this.player.player.body.velocity.x > 0){
+        if (this.player.player.body.velocity.x > 0){
+            /**this.time.addEvent({
+                delay: 50,
+                callback: () => {
+                    this.background.setVelocityX(500)
+                }
+            })**/
         }
         else if (this.player.player.body.velocity.x < 0){
         }
         else {
-        }**/
+        }
 
         //IDLE
         if (this.player.player.body.velocity.x === 0 && this.player.player.body.onFloor()) {
