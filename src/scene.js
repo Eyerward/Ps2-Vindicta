@@ -75,7 +75,7 @@ class scene extends Phaser.Scene {
 
         /****INITIALIZING THE PLAYER*****/
         this.player = new Player(this);
-        this.cameras.main.startFollow(this.player.player,true,0.5,0.04,-100,100);
+        this.cameras.main.startFollow(this.player.player,true,0.5,0.01,-100,100);
 
         /*****GLOBAL OVERLAPS BETWEEN OBJECTS*****/
         this.physics.add.overlap(this.player.player,this.ladder, this.climb.bind(this), null, this);
@@ -166,13 +166,11 @@ class scene extends Phaser.Scene {
             this.player.player.play('idle',true);
         }
 
-        //SAUT
+        //SAUT ET GRIMPETTE
         if (this.player.player.body.velocity.y < 0){
-            this.player.player.jumping =true;
             console.log('Jumping');
         }
         else if (this.player.player.body.velocity.y > 0){
-            this.player.player.falling = true;
             console.log('Falling');
         }
 
@@ -187,12 +185,12 @@ class scene extends Phaser.Scene {
             this.player.player.onLadder = false;
             if (this.upLad)
             {
-                this.player.player.setVelocityY(-400);
+                this.player.player.setVelocityY(-250);
                 this.player.player.body.setAllowGravity(true);
             }
             else if (this.downLad)
             {
-                this.player.player.setVelocityY(400);
+                this.player.player.setVelocityY(250);
                 this.player.player.body.setAllowGravity(true);
             }
             else {
@@ -209,16 +207,21 @@ class scene extends Phaser.Scene {
 
 
         }
-        /**
+
         if(this.player.player.climbing){
             console.log('climbing');
-            if(this.player.player.body.velocity.y != 0){
-                this.player.player.play('climb',true);
+            if(this.player.player.body.velocity.y < 0){
+                this.player.player.play('climbUp',true);
+            }
+            else if(this.player.player.body.velocity.y > 0){
+                this.player.player.play('climbDown',true);
             }
             else {
                 this.player.player.play('climbidle',true);
 
             }
-        }**/
+        }
+
+
     }
 }

@@ -4,7 +4,7 @@ class Player {
         this.scene = scene;
 
 
-        this.player = this.scene.physics.add.sprite(240, 5700, 'player');
+        this.player = this.scene.physics.add.sprite(600, 5700, 'player');
         //Taille de la hitbox du Player
         this.player.body.setSize(this.player.width-70, this.player.height).setOffset(35, 0);
 
@@ -31,26 +31,35 @@ class Player {
             key: 'jump',
             frames: [{ key: 'player', frame: 'robo_player_1' }],
             frameRate: 10,
-        });
+        });**/
         //CLIMB
         this.scene.anims.create({
-            key: 'climb',
+            key: 'climbUp',
             frames: this.scene.anims.generateFrameNames('player', {
-                prefix: 'robo_player_',
-                start: 4,
-                end: 5,
+                prefix: 'reagan_climb_',
+                start: 0,
+                end: 7,
             }),
-            frameRate: 10,
+            frameRate: 16,
+            repeat: -1
+        });
+        this.scene.anims.create({
+            key: 'climbDown',
+            frames: this.scene.anims.generateFrameNames('player', {
+                prefix: 'reagan_climb_',
+                start: 7,
+                end: 0,
+            }),
+            frameRate: 16,
             repeat: -1
         });
         this.scene.anims.create({
             key: 'climbidle',
-            frames: [{ key: 'player', frame: 'robo_player_4' }],
+            frames: [{ key: 'player', frame: 'reagan_climb_0' }],
             frameRate: 10,
-        });**/
+        });
 
-        this.player.jumping = false;
-        this.player.falling = false;
+        /**INTERACTIONS MULTIPLES**/
         this.player.climbing = false;
         this.scene.physics.add.collider(this.player, this.scene.sol);
     }
@@ -58,7 +67,6 @@ class Player {
 
 
     jump(){
-        //this.player.play('jump', true);
         this.player.setVelocityY(-1300);
         console.log(this.player.key)
     }
