@@ -75,7 +75,8 @@ class scene extends Phaser.Scene {
 
         /****INITIALIZING THE PLAYER*****/
         this.player = new Player(this);
-        this.cameras.main.startFollow(this.player.player,true,0.5,0.01,-100,100);
+        //map.getObjectLayer('Player').objects.forEach((player) => { this.player = new Player(this,player.x,player.y);})
+        this.cameras.main.startFollow(this.player.player,true,0.1,0.1,-100,150);
 
         /*****GLOBAL OVERLAPS BETWEEN OBJECTS*****/
         this.physics.add.overlap(this.player.player,this.ladder, this.climb.bind(this), null, this);
@@ -185,12 +186,12 @@ class scene extends Phaser.Scene {
             this.player.player.onLadder = false;
             if (this.upLad)
             {
-                this.player.player.setVelocityY(-250);
+                this.player.player.setVelocityY(-300);
                 this.player.player.body.setAllowGravity(true);
             }
             else if (this.downLad)
             {
-                this.player.player.setVelocityY(250);
+                this.player.player.setVelocityY(300);
                 this.player.player.body.setAllowGravity(true);
             }
             else {

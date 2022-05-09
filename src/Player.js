@@ -1,7 +1,9 @@
 class Player {
 
-    constructor(scene) {
+    constructor(scene,x,y) {
+
         this.scene = scene;
+
 
 
         this.player = this.scene.physics.add.sprite(600, 5700, 'player');
