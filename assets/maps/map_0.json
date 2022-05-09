@@ -769,29 +769,6 @@
          "visible":true,
          "x":0,
          "y":0
-        }, 
-        {
-         "draworder":"topdown",
-         "id":8,
-         "name":"Player",
-         "objects":[
-                {
-                 "height":0,
-                 "id":136,
-                 "name":"",
-                 "point":true,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":1214.66666666667,
-                 "y":5497.33333333333
-                }],
-         "opacity":1,
-         "type":"objectgroup",
-         "visible":true,
-         "x":0,
-         "y":0
         }],
  "nextlayerid":9,
  "nextobjectid":137,
