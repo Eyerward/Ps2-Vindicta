@@ -761,6 +761,65 @@
         }, 
         {
          "draworder":"topdown",
+         "id":12,
+         "name":"Save",
+         "objects":[
+                {
+                 "gid":6,
+                 "height":64,
+                 "id":160,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":2304,
+                 "y":5504
+                }, 
+                {
+                 "gid":6,
+                 "height":64,
+                 "id":161,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":3584,
+                 "y":5312
+                }, 
+                {
+                 "gid":6,
+                 "height":64,
+                 "id":162,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":6144,
+                 "y":5312
+                }, 
+                {
+                 "gid":6,
+                 "height":64,
+                 "id":163,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":7552,
+                 "y":5056
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
          "id":7,
          "name":"CollectiblePower",
          "objects":[
@@ -1008,8 +1067,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":12,
- "nextobjectid":160,
+ "nextlayerid":13,
+ "nextobjectid":164,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.8.1",
