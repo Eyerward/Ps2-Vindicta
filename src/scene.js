@@ -76,17 +76,23 @@ class scene extends Phaser.Scene {
             allowGravity: false,
             immovable: true
         });
-        map.getObjectLayer('Save')
+        map.getObjectLayer('Save').objects.forEach((save) => {
+            const saveSprite = this.physics.add.sprite(save.x, save.y - save.height, 'save_off').setOrigin(0);
+            this.save.add(saveSprite);
+        });
 
 
         /****INITIALIZING THE PLAYER*****/
         this.player = new Player(this);
+        this.currentSaveX = this.player.player.x;
+        this.currentSaveY = this.player.player.y;
         //map.getObjectLayer('Player').objects.forEach((player) => { this.player = new Player(this,player.x,player.y);})
         this.cameras.main.startFollow(this.player.player,true,0.1,0.1,-100,150);
 
         /*****GLOBAL OVERLAPS BETWEEN OBJECTS*****/
         this.physics.add.overlap(this.player.player,this.ladder, this.climb.bind(this), null, this);
         this.physics.add.overlap(this.player.player,this.outLad, this.notClimb.bind(this), null, this);
+        this.physics.add.overlap(this.player.player,this.save, this.checkpoint, null, this);
 
         /**INPUT MOVEMENTS**/
         this.initKeyboard();
@@ -99,6 +105,14 @@ class scene extends Phaser.Scene {
     }
     notClimb(player,outLad){
         this.player.player.climbing = false
+    }
+
+    checkpoint(player,save){
+        console.log("current", this.currentSaveX, this.currentSaveY);
+        this.currentSaveX = this.player.player.x;
+        this.currentSaveY = this.player.player.y;
+        save.visible = false;
+        save.body.enable = false;
     }
 
     initKeyboard()
