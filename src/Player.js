@@ -4,6 +4,7 @@ class Player {
 
         this.scene = scene;
 
+        this.life = 20;
         this.power = 0;
 
 

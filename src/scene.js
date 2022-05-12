@@ -9,6 +9,7 @@ class scene extends Phaser.Scene {
         this.load.image('save_on', 'assets/images/save_on.png');
         //Appel des différents Spritesheets : collectibles, pouvoirs et ennemis
         this.load.atlas('power_collect', 'assets/images/collectible_power.png', 'assets/images/collectible_atlas.json');
+        this.load.atlas('life_collect', 'assets/images/collectible_life.png', 'assets/images/collectible_atlas.json');
 
         //Appel du spritesheet du joueur avec sa ref JSON
         this.load.atlas('player', 'assets/images/reagan_player.png','assets/images/reagan_player_atlas.json');
@@ -96,7 +97,7 @@ class scene extends Phaser.Scene {
         });**/
 
         this.powerCollect = new PowerCollect(this);
-        //this.powerCollect.powerCollect.play('wavingPower', true);
+        this.lifeCollect = new LifeCollect(this);
 
 
         /****INITIALISATION PLAYER AVEC SA POSITION ET SA CAMERA*****/
@@ -111,7 +112,9 @@ class scene extends Phaser.Scene {
         this.physics.add.overlap(this.player.player,this.outLad, this.notClimb.bind(this), null, this);
         this.physics.add.overlap(this.player.player,this.save, this.checkpoint, null, this);
         this.physics.add.collider(this.powerCollect.powerCollect, this.sol);
-        this.physics.add.overlap(this.player.player, this.powerCollect.powerCollect,this.collected, null, this);
+        this.physics.add.collider(this.lifeCollect.lifeCollect, this.sol);
+        this.physics.add.overlap(this.player.player, this.powerCollect.powerCollect,this.collectPower, null, this);
+        this.physics.add.overlap(this.player.player, this.lifeCollect.lifeCollect,this.collectLife, null, this);
 
         /**INPUT MOVEMENTS**/
         this.initKeyboard();
@@ -134,10 +137,17 @@ class scene extends Phaser.Scene {
         save.body.enable = false;
     }
 
-    collected(player, powerCollect){
-        console.log("+1 power");
+    collectPower(player, powerCollect){
+        this.player.power +=10;
+        console.log(this.player.power, "power");
         this.powerCollect.powerCollect.disableBody();
         this.powerCollect.powerCollect.setVisible(false);
+    }
+    collectLife(player, lifeCollect){
+        this.player.life +=10;
+        console.log(this.player.life, "life");
+        this.lifeCollect.lifeCollect.disableBody();
+        this.lifeCollect.lifeCollect.setVisible(false);
     }
 
     initKeyboard()
