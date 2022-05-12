@@ -1,8 +1,10 @@
 class Player {
 
-    constructor(scene,x,y) {
+    constructor(scene/*,x,y*/) {
 
         this.scene = scene;
+
+        this.power = 0;
 
 
 

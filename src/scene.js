@@ -7,6 +7,9 @@ class scene extends Phaser.Scene {
         this.load.image('ladder', 'assets/images/ladder.png');
         this.load.image('save_off', 'assets/images/save_off.png');
         this.load.image('save_on', 'assets/images/save_on.png');
+        //Appel des différents Spritesheets : collectibles, pouvoirs et ennemis
+        this.load.atlas('power_collect', 'assets/images/collectible_power.png', 'assets/images/collectible_atlas.json');
+
         //Appel du spritesheet du joueur avec sa ref JSON
         this.load.atlas('player', 'assets/images/reagan_player.png','assets/images/reagan_player_atlas.json');
         //Appel de la map Tiled et de ses tuiles
@@ -81,18 +84,34 @@ class scene extends Phaser.Scene {
             this.save.add(saveSprite);
         });
 
+        //ORBE DE POUVOIR
 
-        /****INITIALIZING THE PLAYER*****/
+        /**this.powerCollect = this.physics.add.group({
+            allowGravity: false,
+            immovable: true
+        });
+        map.getObjectLayer('CollectiblePower').objects.forEach((powerCollect) => {
+            let powerCollect1 = new PowerCollect(this, powerCollect.x, powerCollect.y - powerCollect.height*2);
+            this.powerCollect.add(powerCollect1);
+        });**/
+
+        this.powerCollect = new PowerCollect(this);
+        //this.powerCollect.powerCollect.play('wavingPower', true);
+
+
+        /****INITIALISATION PLAYER AVEC SA POSITION ET SA CAMERA*****/
         this.player = new Player(this);
         this.currentSaveX = this.player.player.x;
         this.currentSaveY = this.player.player.y;
         //map.getObjectLayer('Player').objects.forEach((player) => { this.player = new Player(this,player.x,player.y);})
         this.cameras.main.startFollow(this.player.player,true,0.1,0.1,-100,150);
 
-        /*****GLOBAL OVERLAPS BETWEEN OBJECTS*****/
+        /*****OVERLAPS ENTRE OBJECTS*****/
         this.physics.add.overlap(this.player.player,this.ladder, this.climb.bind(this), null, this);
         this.physics.add.overlap(this.player.player,this.outLad, this.notClimb.bind(this), null, this);
         this.physics.add.overlap(this.player.player,this.save, this.checkpoint, null, this);
+        this.physics.add.collider(this.powerCollect.powerCollect, this.sol);
+        this.physics.add.overlap(this.player.player, this.powerCollect.powerCollect,this.collected, null, this);
 
         /**INPUT MOVEMENTS**/
         this.initKeyboard();
@@ -103,16 +122,22 @@ class scene extends Phaser.Scene {
         this.player.player.onLadder = true;
         this.player.player.climbing = true;
     }
-    notClimb(player,outLad){
+    notClimb(player, outLad){
         this.player.player.climbing = false
     }
 
-    checkpoint(player,save){
+    checkpoint(player, save){
         console.log("current", this.currentSaveX, this.currentSaveY);
         this.currentSaveX = this.player.player.x;
         this.currentSaveY = this.player.player.y;
         save.visible = false;
         save.body.enable = false;
+    }
+
+    collected(player, powerCollect){
+        console.log("+1 power");
+        this.powerCollect.powerCollect.disableBody();
+        this.powerCollect.powerCollect.setVisible(false);
     }
 
     initKeyboard()
