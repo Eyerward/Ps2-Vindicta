@@ -66,6 +66,7 @@ class Player {
 
         /**INTERACTIONS MULTIPLES**/
         this.player.climbing = false;
+        this.player.droite = true;
         this.scene.physics.add.collider(this.player, this.scene.sol);
     }
 
@@ -73,15 +74,16 @@ class Player {
 
     jump(){
         this.player.setVelocityY(-1300);
-        console.log(this.player.key)
     }
     moveRight(){
+        this.player.droite = true;
         this.player.setVelocityX(600);
         this.player.setFlipX(false);
         if (this.player.body.onFloor()) {
             this.player.play('run', true)}
     }
     moveLeft(){
+        this.player.droite = false;
         this.player.setVelocityX(-600);
         this.player.setFlipX(true);
         if (this.player.body.onFloor()) {

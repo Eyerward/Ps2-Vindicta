@@ -18,6 +18,12 @@ class scene extends Phaser.Scene {
         this.load.tilemapTiledJSON('map_0','assets/maps/map_0.json');
     }
     create(){
+        this.valueCollect = 10
+        this.valueHurt = 20
+        this.damageReap = 50;
+
+        this.screenWidth = 1000;
+
 
         /**PRESETS**/
         //BG parallaxe et Map
@@ -112,8 +118,8 @@ class scene extends Phaser.Scene {
 
         /****INITIALISATION PLAYER AVEC SA POSITION ET SA CAMERA*****/
         this.player = new Player(this);
-        this.SaveX = this.player.player.x;
-        this.SaveY = this.player.player.y;
+        this.saveX = this.player.player.x;
+        this.saveY = this.player.player.y;
         //map.getObjectLayer('Player').objects.forEach((player) => { this.player = new Player(this,player.x,player.y);})
         this.cameras.main.startFollow(this.player.player,true,0.1,0.1,-100,150);
 
@@ -129,7 +135,7 @@ class scene extends Phaser.Scene {
         this.physics.add.overlap(this.player.player, this.powerCollect.powerCollect,this.collectPower, null, this);
         this.physics.add.overlap(this.player.player, this.lifeCollect.lifeCollect,this.collectLife, null, this);
         //ENNEMIS
-        this.physics.add.overlap(this.player.player, this.monster, this.playerHurt, null, this);
+        this.physics.add.collider(this.player.player, this.monster, this.playerHurt, null, this);
 
         /**INPUT MOVEMENTS**/
         this.initKeyboard();
@@ -145,28 +151,38 @@ class scene extends Phaser.Scene {
     }
 
     checkpoint(player, save){
-        console.log("current", this.SaveX, this.SaveY);
-        this.SaveX = this.player.player.x;
-        this.SaveY = this.player.player.y;
+        this.saveX = this.player.player.x;
+        this.saveY = this.player.player.y;
+        console.log("current", this.saveX, this.saveY);
         save.visible = false;
         save.body.enable = false;
     }
 
     collectPower(player, powerCollect){
-        this.player.power +=10;
+        this.player.power += this.valueCollect;
         console.log(this.player.power, "power");
         this.powerCollect.powerCollect.disableBody();
         this.powerCollect.powerCollect.setVisible(false);
     }
     collectLife(player, lifeCollect){
-        this.player.life +=10;
+        this.player.life += this.valueCollect;
         console.log(this.player.life, "life");
         this.lifeCollect.lifeCollect.disableBody();
         this.lifeCollect.lifeCollect.setVisible(false);
     }
 
     playerHurt(player, monster){
-        this.player.player.setVelocityX(-300);
+        this.player.life -= this.valueHurt;
+        console.log(this.player.life, "life");
+        switch(this.player.player.droite){
+            case true:
+                this.player.player.setVelocityX(-800);
+                break;
+            case false:
+                this.player.player.setVelocityX(800);
+                break;
+        }
+        //this.player.player.setVelocityX(-600);
         this.time.addEvent({
             delay: 200,
             callback: () => {
@@ -178,9 +194,26 @@ class scene extends Phaser.Scene {
             alpha: 1,
             duration: 100,
             ease: 'Linear',
-            repeat: 5,
+            repeat: 3,
         });
     }
+
+    death(){
+        this.player.player.setVisible(false);
+        this.player.player.disableBody();
+        this.time.addEvent({
+            delay: 1500,
+            callback: () => {
+                this.player.player.enableBody();
+                this.player.player.setVisible(true);
+                this.player.player.x = this.saveX;
+                this.player.player.y = this.saveY;
+                this.player.life = 100;
+                this.player.power = 0;
+            }});
+    }
+
+
 
     initKeyboard()
     {
@@ -310,6 +343,10 @@ class scene extends Phaser.Scene {
             }
         }
 
+        /**CONDITIONS DE RESPAWN**/
+        if (this.player.life < 0){
+            this.death();
+        }
 
     }
 }
