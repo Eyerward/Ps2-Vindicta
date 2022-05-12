@@ -76,13 +76,13 @@ class Player {
         console.log(this.player.key)
     }
     moveRight(){
-        this.player.setVelocityX(500);
+        this.player.setVelocityX(600);
         this.player.setFlipX(false);
         if (this.player.body.onFloor()) {
             this.player.play('run', true)}
     }
     moveLeft(){
-        this.player.setVelocityX(-500);
+        this.player.setVelocityX(-600);
         this.player.setFlipX(true);
         if (this.player.body.onFloor()) {
             this.player.play('run', true)}

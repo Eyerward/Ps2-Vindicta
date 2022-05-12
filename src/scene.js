@@ -96,25 +96,40 @@ class scene extends Phaser.Scene {
             this.powerCollect.add(powerCollect1);
         });**/
 
+        //ENNEMIS
+        this.monster = this.physics.add.group({
+            allowGravity: false,
+            immovable: true
+        });
+        map.getObjectLayer('Ennemy').objects.forEach((ennemy) => {
+            const ennemySprite = this.physics.add.sprite(ennemy.x, ennemy.y - ennemy.height, 'enemy_blade').setOrigin(0);
+            this.monster.add(ennemySprite);
+        });
+
         this.powerCollect = new PowerCollect(this);
         this.lifeCollect = new LifeCollect(this);
 
 
         /****INITIALISATION PLAYER AVEC SA POSITION ET SA CAMERA*****/
         this.player = new Player(this);
-        this.currentSaveX = this.player.player.x;
-        this.currentSaveY = this.player.player.y;
+        this.SaveX = this.player.player.x;
+        this.SaveY = this.player.player.y;
         //map.getObjectLayer('Player').objects.forEach((player) => { this.player = new Player(this,player.x,player.y);})
         this.cameras.main.startFollow(this.player.player,true,0.1,0.1,-100,150);
 
         /*****OVERLAPS ENTRE OBJECTS*****/
+        //INTERACTIONS LADDER
         this.physics.add.overlap(this.player.player,this.ladder, this.climb.bind(this), null, this);
         this.physics.add.overlap(this.player.player,this.outLad, this.notClimb.bind(this), null, this);
+        //CHECKPOINT
         this.physics.add.overlap(this.player.player,this.save, this.checkpoint, null, this);
+        //COLLECTIBLES
         this.physics.add.collider(this.powerCollect.powerCollect, this.sol);
         this.physics.add.collider(this.lifeCollect.lifeCollect, this.sol);
         this.physics.add.overlap(this.player.player, this.powerCollect.powerCollect,this.collectPower, null, this);
         this.physics.add.overlap(this.player.player, this.lifeCollect.lifeCollect,this.collectLife, null, this);
+        //ENNEMIS
+        this.physics.add.overlap(this.player.player, this.monster, this.playerHurt, null, this);
 
         /**INPUT MOVEMENTS**/
         this.initKeyboard();
@@ -130,9 +145,9 @@ class scene extends Phaser.Scene {
     }
 
     checkpoint(player, save){
-        console.log("current", this.currentSaveX, this.currentSaveY);
-        this.currentSaveX = this.player.player.x;
-        this.currentSaveY = this.player.player.y;
+        console.log("current", this.SaveX, this.SaveY);
+        this.SaveX = this.player.player.x;
+        this.SaveY = this.player.player.y;
         save.visible = false;
         save.body.enable = false;
     }
@@ -148,6 +163,23 @@ class scene extends Phaser.Scene {
         console.log(this.player.life, "life");
         this.lifeCollect.lifeCollect.disableBody();
         this.lifeCollect.lifeCollect.setVisible(false);
+    }
+
+    playerHurt(player, monster){
+        this.player.player.setVelocityX(-300);
+        this.time.addEvent({
+            delay: 200,
+            callback: () => {
+                this.player.player.setVelocityX(0)
+            }});
+        this.player.player.setAlpha(0);
+        let hurt = this.tweens.add({
+            targets: this.player.player,
+            alpha: 1,
+            duration: 100,
+            ease: 'Linear',
+            repeat: 5,
+        });
     }
 
     initKeyboard()
