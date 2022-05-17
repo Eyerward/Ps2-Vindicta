@@ -14,8 +14,8 @@ class scene extends Phaser.Scene {
         //Appel du spritesheet du joueur avec sa ref JSON
         this.load.atlas('player', 'assets/images/reagan_player.png','assets/images/reagan_player_atlas.json');
         //Appel de la map Tiled et de ses tuiles
-        this.load.image('tiles','assets/tileset/platform_vindicta_v2.png')
-        this.load.tilemapTiledJSON('map_0','assets/maps/map_0.json');
+        this.load.image('tiles','assets/tileset/platform_vindicta_v3.png')
+        this.load.tilemapTiledJSON('map_1','assets/maps/map_1.json');
     }
     create(){
         this.valueCollect = 10
