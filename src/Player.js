@@ -7,7 +7,6 @@ class Player {
         this.life = 20;
         this.power = 0;
 
-/**EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE**/
 
         this.player = this.scene.physics.add.sprite(600, 5700, 'player');
         //Taille de la hitbox du Player
