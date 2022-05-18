@@ -53,7 +53,7 @@
          "name":"Cache",
          "opacity":1,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":200,
          "x":0,
          "y":0
@@ -1120,13 +1120,13 @@
                 {
                  "gid":43,
                  "height":64,
-                 "id":95,
+                 "id":105,
                  "name":"",
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":64,
-                 "x":6528,
+                 "x":7616,
                  "y":5056
                 }],
          "opacity":1,
@@ -1136,7 +1136,7 @@
          "y":0
         }],
  "nextlayerid":11,
- "nextobjectid":105,
+ "nextobjectid":106,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.8.2",
