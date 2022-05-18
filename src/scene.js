@@ -10,17 +10,16 @@ class scene extends Phaser.Scene {
         //Appel des différents Spritesheets : collectibles, pouvoirs et ennemis
         this.load.atlas('power_collect', 'assets/images/collectible_power.png', 'assets/images/collectible_atlas.json');
         this.load.atlas('life_collect', 'assets/images/collectible_life.png', 'assets/images/collectible_atlas.json');
-
+        this.load.atlas('energy', 'assets/images/energy_blade.png', 'assets/images/energy.json')
         //Appel du spritesheet du joueur avec sa ref JSON
         this.load.atlas('player', 'assets/images/reagan_player.png','assets/images/reagan_player_atlas.json');
         //Appel de la map Tiled et de ses tuiles
-        this.load.image('tiles','assets/tileset/platform_vindicta_v3.png')
+        this.load.image('tiles','assets/tileset/platform_vindicta_v4.png')
         this.load.tilemapTiledJSON('map_1','assets/maps/map_1.json');
     }
     create(){
-        this.valueCollect = 10
-        this.valueHurt = 20
-        this.damageReap = 50;
+        this.valueCollect = 10;
+        this.valueHurt = 20;
 
         this.screenWidth = 1000;
 
@@ -32,8 +31,8 @@ class scene extends Phaser.Scene {
         this.background = this.add.image(-100, 4500,'background').setOrigin(0, 0);
         this.background.setScale(1.5, 1.5);
 
-        const map = this.make.tilemap({ key: 'map_0' });
-        const tileset = map.addTilesetImage('vindicta_platforms', 'tiles');
+        const map = this.make.tilemap({ key: 'map_1' });
+        const tileset = map.addTilesetImage('vindicta_platform', 'tiles');
         const grotte = map.createStaticLayer('Grotte', tileset, 0, 0);
         const platforms = map.createStaticLayer('Platforms', tileset, 0, 0);
         const staticObjects = map.createStaticLayer('StaticObjects', tileset, 0, 0);

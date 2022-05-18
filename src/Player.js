@@ -92,4 +92,8 @@ class Player {
         this.player.setVelocityX(0);
     }
 
+    attack(){
+
+    }
+
 }
