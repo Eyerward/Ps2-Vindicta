@@ -6,9 +6,10 @@ class Player {
 
         this.life = 200;
         this.power = 0;
+        this.reap = true;
 
 
-        this.player = this.scene.physics.add.sprite(600, 5700, 'player');
+        this.player = this.scene.physics.add.sprite(800, 5700, 'player');
         //Taille de la hitbox du Player
         this.player.body.setSize(this.player.width-70, this.player.height).setOffset(35, 0);
 
@@ -97,7 +98,7 @@ class Player {
         if (this.player.charge ===true) {
             this.player.charge = false;
             new Attack(this.scene, this.player.x, this.player.y, this.player.flipX, this.player.body.velocity.x);
-            this.scene.time.delayedCall(200,()=>{
+            this.scene.time.delayedCall(300,()=>{
                 this.player.charge = true
             });
         }

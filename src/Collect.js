@@ -2,7 +2,7 @@ class Collect {
     constructor(scene/*, x, y*/) {
         this.scene = scene;
 
-        this.collect = this.scene.physics.add.sprite(900, 5500, 'power_collect');
+        this.collect = this.scene.physics.add.sprite(1100, 5500, 'power_collect');
         //Taille de la hitbox du collectible
         this.collect.body.setSize(this.collect.width-40, this.collect.height).setOffset(20, 20);
         this.collect.body.setBounce(0.5);

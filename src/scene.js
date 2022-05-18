@@ -119,9 +119,10 @@ class scene extends Phaser.Scene {
             allowGravity: false,
             immovable: true
         });
-        map.getObjectLayer('Ennemy').objects.forEach((ennemy) => {
-            const ennemySprite = this.physics.add.sprite(ennemy.x, ennemy.y - ennemy.height, 'enemy_blade').setOrigin(0);
-            this.monster.add(ennemySprite);
+        map.getObjectLayer('Ennemy').objects.forEach((monster) => {
+            // const monsterSprite = this.physics.add.sprite(monster.x, monster.y - monster.height, 'enemy_blade').setOrigin(0);
+            // this.monster.add(monsterSprite);
+            new Monster(this, monster.x, monster.y - monster.height);
         });
 
         this.collect = new Collect(this);
@@ -152,6 +153,7 @@ class scene extends Phaser.Scene {
         this.initKeyboard();
 
     }
+
     discover(){
         this.mapCache.visible = false;
     }
@@ -172,13 +174,13 @@ class scene extends Phaser.Scene {
         save.body.enable = false;
     }
 
-    collected(player, collect){
+    collected(){
         this.player.power += this.valueCollect;
         console.log(this.player.power, "power");
         this.collect.collect.destroy();
     }
 
-    playerHurt(player, monster){
+    playerHurt(){
         this.player.life -= this.valueHurt;
         console.log(this.player.life, "life");
 
@@ -192,11 +194,11 @@ class scene extends Phaser.Scene {
         });
     }
 
-    death(){
+    playerDeath(){
         this.player.player.setVisible(false);
         this.player.player.disableBody();
         this.time.addEvent({
-            delay: 1500,
+            delay: 1000,
             callback: () => {
                 this.player.player.enableBody();
                 this.player.player.setVisible(true);
@@ -205,6 +207,12 @@ class scene extends Phaser.Scene {
                 this.player.life = 100;
                 this.player.power = 0;
             }});
+    }
+
+    monsterHurt(monster){
+        if (monster.life <= 0){
+            monster
+        }
     }
 
 
@@ -218,20 +226,24 @@ class scene extends Phaser.Scene {
             switch (kevent.keyCode)
             {
                 case Phaser.Input.Keyboard.KeyCodes.D:
+                case Phaser.Input.Keyboard.KeyCodes.RIGHT:
                     me.rightLad = true;
                     me.player.moveRight();
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.Q:
+                case Phaser.Input.Keyboard.KeyCodes.LEFT:
                     me.leftLad = true;
                     me.player.moveLeft();
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.Z:
+                case Phaser.Input.Keyboard.KeyCodes.UP:
                     me.upLad = true;
                     if (me.player.player.body.onFloor()) {
                         me.player.jump();
                     }
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.S:
+                case Phaser.Input.Keyboard.KeyCodes.DOWN:
                     me.downLad = true;
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.SPACE:
@@ -242,18 +254,22 @@ class scene extends Phaser.Scene {
         {
             switch (kevent.keyCode) {
                 case Phaser.Input.Keyboard.KeyCodes.D:
+                case Phaser.Input.Keyboard.KeyCodes.RIGHT:
                     me.rightLad = false;
                     me.player.noMove();
 
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.Q:
+                case Phaser.Input.Keyboard.KeyCodes.LEFT:
                     me.leftLad = false;
                     me.player.noMove();
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.Z:
+                case Phaser.Input.Keyboard.KeyCodes.UP:
                     me.upLad = false;
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.S:
+                case Phaser.Input.Keyboard.KeyCodes.DOWN:
                     me.downLad = false;
                     break;
             }
@@ -339,10 +355,11 @@ class scene extends Phaser.Scene {
             }
         }
 
-        /**CONDITIONS DE RESPAWN**/
-        if (this.player.life < 0){
-            this.death();
+        /**CONDITIONS DE VIE OU DE MORT**/
+        if (this.player.life <= 0){
+            this.playerDeath();
         }
+
 
     }
 }

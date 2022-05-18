@@ -72,7 +72,7 @@
                  "visible":true,
                  "width":448,
                  "x":5760,
-                 "y":4544
+                 "y":4416
                 }, 
                 {
                  "height":64,
@@ -92,7 +92,7 @@
          "y":0
         }, 
         {
-         "color":"#ffffff",
+         "color":"#00aa00",
          "draworder":"topdown",
          "id":4,
          "name":"Collisions",
@@ -105,7 +105,7 @@
                  "type":"",
                  "visible":true,
                  "width":64,
-                 "x":384,
+                 "x":576,
                  "y":5312
                 }, 
                 {
@@ -115,8 +115,8 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":2880,
-                 "x":384,
+                 "width":2688,
+                 "x":576,
                  "y":5760
                 }, 
                 {
@@ -648,18 +648,7 @@
                  "y":4352
                 }, 
                 {
-                 "height":64,
-                 "id":96,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":256,
-                 "x":384,
-                 "y":5248
-                }, 
-                {
-                 "height":128,
+                 "height":192,
                  "id":97,
                  "name":"",
                  "rotation":0,
@@ -999,18 +988,6 @@
                 {
                  "gid":43,
                  "height":64,
-                 "id":83,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":64,
-                 "x":2112,
-                 "y":5696
-                }, 
-                {
-                 "gid":43,
-                 "height":64,
                  "id":84,
                  "name":"",
                  "rotation":0,
@@ -1030,7 +1007,7 @@
                  "visible":true,
                  "width":64,
                  "x":3520,
-                 "y":5504
+                 "y":5568
                 }, 
                 {
                  "gid":43,
@@ -1162,7 +1139,7 @@
  "nextobjectid":105,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.8.1",
+ "tiledversion":"1.8.2",
  "tileheight":64,
  "tilesets":[
         {

@@ -1,5 +1,5 @@
 class Attack {
-    constructor(scene, x, y, state, vitesse) {
+    constructor(scene, x, y, state, speed) {
 
         this.scene = scene;
 
@@ -22,20 +22,18 @@ class Attack {
         this.attack.play('volt', true);
 
         if (state === true) {
-            this.attack.setVelocityX(vitesse -1300);
+            this.attack.setVelocityX(speed -650);
         }
         else {
-            this.attack.setVelocityX(vitesse + 1300);
+            this.attack.setVelocityX(speed + 650);
         }
 
-        this.scene.time.delayedCall(10000,()=>{
+        this.scene.time.delayedCall(1000,()=>{
             this.attack.destroy()
         });
 
         this.scene.physics.add.collider(this.attack, this.scene.monster, function (attack,monster) {
-            console.log(monster);
             attack.destroy();
-            monster.destroy();
         }, null, this);
     }
 
