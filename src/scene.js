@@ -37,7 +37,7 @@ class scene extends Phaser.Scene {
         const staticObjects = map.createStaticLayer('StaticObjects', tileset, 0, 0);
         const cache = map.createStaticLayer('Cache', tileset, 0, 0);
         this.mapCache = cache;
-       this.mapCache.visible = true;
+        this.mapCache.visible = true;
 
         /**INTERACTIONS AVEC LA MAP**/
         //COLLISIONS
@@ -124,8 +124,7 @@ class scene extends Phaser.Scene {
             this.monster.add(ennemySprite);
         });
 
-        this.powerCollect = new PowerCollect(this);
-        this.lifeCollect = new LifeCollect(this);
+        this.collect = new Collect(this);
 
 
         /****INITIALISATION PLAYER AVEC SA POSITION ET SA CAMERA*****/
@@ -144,10 +143,8 @@ class scene extends Phaser.Scene {
         //CHECKPOINT
         this.physics.add.overlap(this.player.player,this.save, this.checkpoint, null, this);
         //COLLECTIBLES
-        this.physics.add.collider(this.powerCollect.powerCollect, this.sol);
-        this.physics.add.collider(this.lifeCollect.lifeCollect, this.sol);
-        this.physics.add.overlap(this.player.player, this.powerCollect.powerCollect,this.collectPower, null, this);
-        this.physics.add.overlap(this.player.player, this.lifeCollect.lifeCollect,this.collectLife, null, this);
+        this.physics.add.collider(this.collect.collect, this.sol);
+        this.physics.add.overlap(this.player.player, this.collect.collect,this.collected, null, this);
         //ENNEMIS
         this.physics.add.collider(this.player.player, this.monster, this.playerHurt, null, this);
 
@@ -175,17 +172,10 @@ class scene extends Phaser.Scene {
         save.body.enable = false;
     }
 
-    collectPower(player, powerCollect){
+    collected(player, collect){
         this.player.power += this.valueCollect;
         console.log(this.player.power, "power");
-        this.powerCollect.powerCollect.disableBody();
-        this.powerCollect.powerCollect.setVisible(false);
-    }
-    collectLife(player, lifeCollect){
-        this.player.life += this.valueCollect;
-        console.log(this.player.life, "life");
-        this.lifeCollect.lifeCollect.disableBody();
-        this.lifeCollect.lifeCollect.setVisible(false);
+        this.collect.collect.destroy();
     }
 
     playerHurt(player, monster){
