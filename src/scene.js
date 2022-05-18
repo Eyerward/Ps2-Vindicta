@@ -19,10 +19,9 @@ class scene extends Phaser.Scene {
     }
     create(){
         this.valueCollect = 10;
-        this.valueHurt = 20;
+        this.valueHurt = 2;
 
         this.screenWidth = 1000;
-
 
         /**PRESETS**/
         //BG parallaxe et Map
@@ -36,7 +35,11 @@ class scene extends Phaser.Scene {
         const grotte = map.createStaticLayer('Grotte', tileset, 0, 0);
         const platforms = map.createStaticLayer('Platforms', tileset, 0, 0);
         const staticObjects = map.createStaticLayer('StaticObjects', tileset, 0, 0);
+        const cache = map.createStaticLayer('Cache', tileset, 0, 0);
+        this.mapCache = cache;
+       this.mapCache.visible = true;
 
+        /**INTERACTIONS AVEC LA MAP**/
         //COLLISIONS
         this.sol = this.physics.add.group({
             allowGravity: false,
@@ -45,6 +48,16 @@ class scene extends Phaser.Scene {
         map.getObjectLayer('Collisions').objects.forEach((sol) => {
             const solSprite = this.physics.add.sprite(sol.x+(sol.width*0.5),sol.y + (sol.height*0.5)).setSize(sol.width,sol.height);
             this.sol.add(solSprite);
+        });
+
+        //CACHE DE GROTTE
+        this.cache = this.physics.add.group({
+            allowGravity: false,
+            immovable: true
+        });
+        map.getObjectLayer('Cache').objects.forEach((cache) => {
+            const cacheSprite = this.physics.add.sprite(cache.x+(cache.width*0.5),cache.y+(cache.height*0.5)).setSize(cache.width,cache.height);
+            this.cache.add(cacheSprite);
         });
 
 
@@ -90,7 +103,7 @@ class scene extends Phaser.Scene {
             this.save.add(saveSprite);
         });
 
-        //ORBE DE POUVOIR
+        //ORBES COLLECTIBLES
 
         /**this.powerCollect = this.physics.add.group({
             allowGravity: false,
@@ -120,9 +133,11 @@ class scene extends Phaser.Scene {
         this.saveX = this.player.player.x;
         this.saveY = this.player.player.y;
         //map.getObjectLayer('Player').objects.forEach((player) => { this.player = new Player(this,player.x,player.y);})
-        this.cameras.main.startFollow(this.player.player,true,0.1,0.1,-100,150);
+        this.cameras.main.startFollow(this.player.player,true,0.1,0.1,0,150);
 
         /*****OVERLAPS ENTRE OBJECTS*****/
+        //CACHE
+        this.physics.add.overlap(this.player.player,this.cache, this.discover, null, this);
         //INTERACTIONS LADDER
         this.physics.add.overlap(this.player.player,this.ladder, this.climb.bind(this), null, this);
         this.physics.add.overlap(this.player.player,this.outLad, this.notClimb.bind(this), null, this);
@@ -139,6 +154,9 @@ class scene extends Phaser.Scene {
         /**INPUT MOVEMENTS**/
         this.initKeyboard();
 
+    }
+    discover(){
+        this.mapCache.visible = false;
     }
 
     climb(player, ladder){
@@ -173,20 +191,7 @@ class scene extends Phaser.Scene {
     playerHurt(player, monster){
         this.player.life -= this.valueHurt;
         console.log(this.player.life, "life");
-        switch(this.player.player.droite){
-            case true:
-                this.player.player.setVelocityX(-800);
-                break;
-            case false:
-                this.player.player.setVelocityX(800);
-                break;
-        }
-        //this.player.player.setVelocityX(-600);
-        this.time.addEvent({
-            delay: 200,
-            callback: () => {
-                this.player.player.setVelocityX(0)
-            }});
+
         this.player.player.setAlpha(0);
         let hurt = this.tweens.add({
             targets: this.player.player,
@@ -239,6 +244,8 @@ class scene extends Phaser.Scene {
                 case Phaser.Input.Keyboard.KeyCodes.S:
                     me.downLad = true;
                     break;
+                case Phaser.Input.Keyboard.KeyCodes.SPACE:
+                    me.player.attack();
             }
         });
         this.input.keyboard.on('keyup', function(kevent)

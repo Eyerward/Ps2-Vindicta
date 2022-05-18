@@ -4,7 +4,7 @@ class Player {
 
         this.scene = scene;
 
-        this.life = 20;
+        this.life = 200;
         this.power = 0;
 
 
@@ -66,6 +66,7 @@ class Player {
         /**INTERACTIONS MULTIPLES**/
         this.player.climbing = false;
         this.player.droite = true;
+        this.player.charge = true;
         this.scene.physics.add.collider(this.player, this.scene.sol);
     }
 
@@ -93,7 +94,13 @@ class Player {
     }
 
     attack(){
-
+        if (this.player.charge ===true) {
+            this.player.charge = false;
+            new Attack(this.scene, this.player.x, this.player.y, this.player.flipX, this.player.body.velocity.x);
+            this.scene.time.delayedCall(200,()=>{
+                this.player.charge = true
+            });
+        }
     }
 
 }
