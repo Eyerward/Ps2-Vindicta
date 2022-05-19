@@ -7,6 +7,7 @@ class scene extends Phaser.Scene {
         this.load.image('ladder', 'assets/images/ladder.png');
         this.load.image('save_off', 'assets/images/save_off.png');
         this.load.image('save_on', 'assets/images/save_on.png');
+        this.load.image('die_particle', 'assets/images/die_particle.png');
         //Appel des différents Spritesheets : collectibles, pouvoirs et ennemis
         this.load.atlas('power_collect', 'assets/images/collectible_power.png', 'assets/images/collectible_atlas.json');
         this.load.atlas('life_collect', 'assets/images/collectible_life.png', 'assets/images/collectible_atlas.json');
@@ -18,7 +19,8 @@ class scene extends Phaser.Scene {
         this.load.tilemapTiledJSON('map_1','assets/maps/map_1.json');
     }
     create(){
-        this.valueCollect = 10;
+
+        //DATA
         this.valueHurt = 2;
 
         this.screenWidth = 1000;
@@ -59,6 +61,14 @@ class scene extends Phaser.Scene {
             const cacheSprite = this.physics.add.sprite(cache.x+(cache.width*0.5),cache.y+(cache.height*0.5)).setSize(cache.width,cache.height);
             this.cache.add(cacheSprite);
         });
+
+        /***ESSAI DE COLLECTIBLE**/
+        this.collect = new Collect(this);
+        /****INITIALISATION PLAYER AVEC SA POSITION ET SA CAMERA*****/
+        this.player = new Player(this);
+        this.saveX = this.player.player.x;
+        this.saveY = this.player.player.y;
+        this.cameras.main.startFollow(this.player.player,true,0.1,0.1,0,150);
 
 
         /*******GAME OBJECTS*******/
@@ -120,20 +130,28 @@ class scene extends Phaser.Scene {
             immovable: true
         });
         map.getObjectLayer('Ennemy').objects.forEach((monster) => {
-            // const monsterSprite = this.physics.add.sprite(monster.x, monster.y - monster.height, 'enemy_blade').setOrigin(0);
-            // this.monster.add(monsterSprite);
-            new Monster(this, monster.x, monster.y - monster.height);
+            const monsterSprite = this.physics.add.sprite(monster.x, monster.y - monster.height, 'enemy_blade').setOrigin(0);
+            this.monster.add(monsterSprite);
+            // new Monster(this, monster.x, monster.y - monster.height);
         });
 
-        this.collect = new Collect(this);
+        //VFX PARTICLES
 
 
-        /****INITIALISATION PLAYER AVEC SA POSITION ET SA CAMERA*****/
-        this.player = new Player(this);
-        this.saveX = this.player.player.x;
-        this.saveY = this.player.player.y;
-        //map.getObjectLayer('Player').objects.forEach((player) => { this.player = new Player(this,player.x,player.y);})
-        this.cameras.main.startFollow(this.player.player,true,0.1,0.1,0,150);
+        this.dieParticles = this.add.particles('die_particle');
+        this.dieParticles.createEmitter({
+            speed: 500,
+            lifespan: 500,
+            quantity: 50,
+            alpha: 0.5,
+            gravity: {x: 1000, y: 10000},
+            scale: {start: 1, end: 0},
+            //angle: { min: -180, max: 0 },
+            follow: this.monster,
+            blendMode: 'ADD',
+            on: false
+        });
+
 
         /*****OVERLAPS ENTRE OBJECTS*****/
         //CACHE
@@ -143,11 +161,11 @@ class scene extends Phaser.Scene {
         this.physics.add.overlap(this.player.player,this.outLad, this.notClimb.bind(this), null, this);
         //CHECKPOINT
         this.physics.add.overlap(this.player.player,this.save, this.checkpoint, null, this);
+        //ENNEMIS
+        this.physics.add.collider(this.player.player, this.monster, this.playerHurt, null, this);
         //COLLECTIBLES
         this.physics.add.collider(this.collect.collect, this.sol);
         this.physics.add.overlap(this.player.player, this.collect.collect,this.collected, null, this);
-        //ENNEMIS
-        this.physics.add.collider(this.player.player, this.monster, this.playerHurt, null, this);
 
         /**INPUT MOVEMENTS**/
         this.initKeyboard();
@@ -158,11 +176,11 @@ class scene extends Phaser.Scene {
         this.mapCache.visible = false;
     }
 
-    climb(player, ladder){
+    climb(){
         this.player.player.onLadder = true;
         this.player.player.climbing = true;
     }
-    notClimb(player, outLad){
+    notClimb(){
         this.player.player.climbing = false
     }
 
@@ -175,23 +193,30 @@ class scene extends Phaser.Scene {
     }
 
     collected(){
-        this.player.power += this.valueCollect;
+        this.player.power += this.collect.valueCollect;
         console.log(this.player.power, "power");
+        this.collect.powerParticles.emitParticleAt(this.collect.collect.body.x, this.collect.collect.body.y);
         this.collect.collect.destroy();
     }
 
     playerHurt(){
+        this.player.player.hurt = true;
         this.player.life -= this.valueHurt;
         console.log(this.player.life, "life");
-
-        this.player.player.setAlpha(0);
-        let hurt = this.tweens.add({
-            targets: this.player.player,
-            alpha: 1,
-            duration: 100,
-            ease: 'Linear',
-            repeat: 3,
-        });
+        if (this.player.player.hurt === true) {
+            this.player.player.hurt = false;
+            this.player.player.setAlpha(0.5);
+            let hurt = this.tweens.add({
+                targets: this.player.player,
+                alpha: 1,
+                duration: 100,
+                ease: 'Linear',
+                repeat: 3,
+            });
+            this.time.delayedCall(300,()=>{
+                this.player.player.hurt = true;
+            });
+        }
     }
 
     playerDeath(){
@@ -209,11 +234,11 @@ class scene extends Phaser.Scene {
             }});
     }
 
-    monsterHurt(monster){
-        if (monster.life <= 0){
-            monster
-        }
-    }
+    // monsterHurt(monster){
+    //     if (monster.life <= 0){
+    //         monster
+    //     }
+    // }
 
 
 
@@ -248,6 +273,10 @@ class scene extends Phaser.Scene {
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.SPACE:
                     me.player.attack();
+                    break;
+                case Phaser.Input.Keyboard.KeyCodes.SHIFT:
+                    me.player.charaSwitch();
+                    break;
             }
         });
         this.input.keyboard.on('keyup', function(kevent)
@@ -299,17 +328,38 @@ class scene extends Phaser.Scene {
             this.player.player.play('idle',true);
         }
 
-        //SAUT ET GRIMPETTE
-        if (this.player.player.body.velocity.y < 0){
-            console.log('Jumping');
-        }
-        else if (this.player.player.body.velocity.y > 0){
-            console.log('Falling');
-        }
-
-        if (this.player.player.body.velocity.x != 0 && this.player.player.body.onFloor() && this.player.player.falling){
+        //RUN
+        if (this.player.player.body.velocity.x != 0 && this.player.player.body.onFloor() && this.player.player.falling === true){
             this.player.player.play('run',true);
         }
+
+        //SAUT ET GRIMPETTE
+
+        if(this.player.player.climbing === true){
+            console.log('climbing');
+            if(this.player.player.body.velocity.y < 0){
+                this.player.player.play('climbUp',true);
+            }
+            else if(this.player.player.body.velocity.y > 0){
+                this.player.player.play('climbDown',true);
+            }
+            else {
+                this.player.player.play('climbidle',true);
+            }
+        }
+        else {
+            if (this.player.player.body.velocity.y < 0){
+                console.log('Jumping');
+                this.player.player.play('jump', true);
+            }
+            else if (this.player.player.body.velocity.y > 0){
+                console.log('Falling');
+                this.player.player.falling =true;
+                this.player.player.play('fall', true);
+
+            }
+        }
+
 
 
         /**CONDITIONS POUR GRIMPER**/
@@ -339,20 +389,6 @@ class scene extends Phaser.Scene {
             }
 
 
-        }
-
-        if(this.player.player.climbing){
-            console.log('climbing');
-            if(this.player.player.body.velocity.y < 0){
-                this.player.player.play('climbUp',true);
-            }
-            else if(this.player.player.body.velocity.y > 0){
-                this.player.player.play('climbDown',true);
-            }
-            else {
-                this.player.player.play('climbidle',true);
-
-            }
         }
 
         /**CONDITIONS DE VIE OU DE MORT**/
