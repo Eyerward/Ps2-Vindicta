@@ -246,6 +246,84 @@
                 "x": 0.5,
                 "y": 0.5
             }
+        },
+        {
+            "filename": "reagan_jump_0",
+            "frame": {
+                "x": 512,
+                "y": 384,
+                "w": 128,
+                "h": 128
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "reagan_jump_1",
+            "frame": {
+                "x": 0,
+                "y": 512,
+                "w": 128,
+                "h": 128
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "reagan_jump_2",
+            "frame": {
+                "x": 128,
+                "y": 512,
+                "w": 128,
+                "h": 128
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "reagan_jump_3",
+            "frame": {
+                "x": 256,
+                "y": 512,
+                "w": 128,
+                "h": 128
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "reagan_jump_4",
+            "frame": {
+                "x": 384,
+                "y": 512,
+                "w": 128,
+                "h": 128
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "reagan_jump_5",
+            "frame": {
+                "x": 512,
+                "y": 512,
+                "w": 128,
+                "h": 128
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
         }
     ]
 }
