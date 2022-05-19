@@ -84,19 +84,23 @@ class Player {
             frameRate: 10,
         });
 
-        /**VFX POTENTIELLE**/
-        this.swordParticles = this.scene.add.particles('die_particle');
-        this.swordParticles.createEmitter({
-            speed: this.player.body.velocity.x + 500,
-            lifespan: 1000,
-            quantity: 20,
+
+
+        this.switchParticles = this.scene.add.particles('energy');
+        this.switchParticles.createEmitter({
+            speed: 200,
+            lifespan: 500,
+            quantity: 100,
             alpha: 1,
-            scale: {start: 1, end: 0},
-            angle: 0,
+            //gravityY: 1000,
+            scale: {start: 2, end: 0},
+            //angle: { min: 100, max: 80 },
             //follow: this.player,
             blendMode: 'ADD',
             on: false
         });
+
+
 
         /**INTERACTIONS MULTIPLES**/
         this.player.climbing = false;
@@ -136,9 +140,6 @@ class Player {
         if (this.player.charge ===true) {
             this.player.charge = false;
             new Attack(this.scene, this.player.x, this.player.y, this.player.flipX, this.player.body.velocity.x, this.reap);
-            //this.scene.time.delayedCall(100,()=>{
-            this.swordParticles.emitParticleAt(this.player.body.x+60, this.player.body.y+20);
-            //});
             this.scene.time.delayedCall(300,()=>{
                 this.player.charge = true
             });
@@ -146,6 +147,7 @@ class Player {
     }
 
     charaSwitch(){
+        this.switchParticles.emitParticleAt(this.player.body.x + 29, this.player.body.y+64);
         if (this.reap === true) {
             console.log('BLADE');
             this.reap = false;
