@@ -7,11 +7,13 @@ class Player {
         this.life = 200;
         this.power = 0;
         this.reap = true;
+        this.switched = true;
 
 
         this.player = this.scene.physics.add.sprite(800, 5700, 'player');
         //Taille de la hitbox du Player
         this.player.body.setSize(this.player.width-70, this.player.height).setOffset(35, 0);
+        this.player.body.setBounce(0.5,0);
 
         /***Animations***/
         //RUN
@@ -85,8 +87,9 @@ class Player {
         });
 
 
-
+        /**VFX MULTIPLES**/
         this.switchParticles = this.scene.add.particles('energy');
+        this.jumpParticles = this.scene.add.particles('energy');
         this.switchParticles.createEmitter({
             speed: 200,
             lifespan: 500,
@@ -97,6 +100,18 @@ class Player {
             //angle: { min: 100, max: 80 },
             //follow: this.player,
             blendMode: 'ADD',
+            on: false
+        });
+        this.jumpParticles.createEmitter({
+            speed: 300,
+            lifespan: 300,
+            quantity: 5,
+            alpha: 1,
+            gravityY: 2000,
+            scale: {start: 1, end: 0},
+            angle: { min: -135, max: -45 },
+            //follow: this.player,
+            //blendMode: 'ADD',
             on: false
         });
 
@@ -115,6 +130,7 @@ class Player {
 
 
     jump(){
+        this.jumpParticles.emitParticleAt(this.player.x+10, this.player.y+50);
         this.player.jumping = true;
         this.player.setVelocityY(-1300);
     }
@@ -137,24 +153,28 @@ class Player {
     }
 
     attack(){
-        if (this.player.charge ===true) {
-            this.player.charge = false;
-            new Attack(this.scene, this.player.x, this.player.y, this.player.flipX, this.player.body.velocity.x, this.reap);
-            this.scene.time.delayedCall(300,()=>{
-                this.player.charge = true
-            });
+        if(this.player.climbing === false) {
+            if (this.player.charge === true) {
+                this.player.charge = false;
+                new Attack(this.scene, this.player.x, this.player.y, this.player.flipX, this.player.body.velocity.x, this.reap);
+                this.scene.time.delayedCall(300, () => {
+                    this.player.charge = true
+                });
+            }
         }
     }
 
     charaSwitch(){
-        this.switchParticles.emitParticleAt(this.player.body.x + 29, this.player.body.y+64);
-        if (this.reap === true) {
-            console.log('BLADE');
-            this.reap = false;
-        }
-        else {
-            console.log('REAP');
-            this.reap = true;
+        if(this.switched === true) {
+            this.switched = false;
+            this.switchParticles.emitParticleAt(this.player.body.x + 29, this.player.body.y + 64);
+            if (this.reap === true) {
+                console.log('BLADE');
+                this.reap = false;
+            } else {
+                console.log('REAP');
+                this.reap = true;
+            }
         }
     }
 

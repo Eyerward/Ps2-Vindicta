@@ -30,8 +30,9 @@ class scene extends Phaser.Scene {
         //BG parallaxe et Map
         this.parallaxe = this.add.container(0,0);
 
-        this.background = this.add.image(-100, 4500,'background').setOrigin(0, 0);
+        this.background = this.add.image(0, 4500,'background').setOrigin(0, 0);
         this.background.setScale(1.5, 1.5);
+        this.parallaxe.add(this.background);
 
         const map = this.make.tilemap({ key: 'map_1' });
         const tileset = map.addTilesetImage('vindicta_platform', 'tiles');
@@ -170,6 +171,7 @@ class scene extends Phaser.Scene {
 
         /**INPUT MOVEMENTS**/
         this.initKeyboard();
+        this.parallaxe.scrollFactorX = 0.1;
 
     }
 
@@ -275,7 +277,7 @@ class scene extends Phaser.Scene {
                 case Phaser.Input.Keyboard.KeyCodes.SPACE:
                     me.player.attack();
                     break;
-                case Phaser.Input.Keyboard.KeyCodes.N:
+                case Phaser.Input.Keyboard.KeyCodes.C:
                     me.player.charaSwitch();
                     break;
             }
@@ -302,6 +304,8 @@ class scene extends Phaser.Scene {
                 case Phaser.Input.Keyboard.KeyCodes.DOWN:
                     me.downLad = false;
                     break;
+                case Phaser.Input.Keyboard.KeyCodes.C:
+                    me.player.switched =true;
             }
         });
     }
@@ -332,6 +336,10 @@ class scene extends Phaser.Scene {
         //RUN
         if (this.player.player.body.velocity.x != 0 && this.player.player.body.onFloor() && this.player.player.falling === true){
             this.player.player.play('run',true);
+        }
+        if(this.player.player.body.velocity.y ===0){
+            this.player.player.jumping = false;
+            this.player.player.falling = false;
         }
 
         //SAUT ET GRIMPETTE

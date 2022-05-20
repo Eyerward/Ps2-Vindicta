@@ -72,7 +72,7 @@ class Attack {
         }, null, this);
 
         this.scene.physics.add.collider(this.attack, this.scene.monster, function (attack,monster) {
-            this.attackParticles.emitParticleAt(this.attack.x +15, this.attack.y+15);
+            this.attackParticles.emitParticleAt(this.attack.x, this.attack.y);
             attack.destroy();
             monster.destroy();
         }, null, this);

@@ -25,15 +25,15 @@ class Collect {
 
         this.powerParticles = this.scene.add.particles('power_collect');
         this.powerParticles.createEmitter({
-            speed: 150,
+            speed: 100,
             lifespan: 500,
             quantity: 10,
             alpha: 0.5,
-            gravity: {x: 1000, y: 10000},
+            gravityY: 800,
             scale: {start: 1, end: 0},
             angle: { min: -180, max: 0 },
             follow: this.collect.collect,
-            //blendMode: 'ADD',
+            blendMode: 'ADD',
             on: false
         });
     }
