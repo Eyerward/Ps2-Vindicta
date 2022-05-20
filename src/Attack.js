@@ -5,7 +5,7 @@ class Attack {
 
         /**APPEL DU SPRITE D'ATTAQUE**/
 
-        this.attack = this.scene.physics.add.sprite(x+50,y-30,'energy');
+        this.attack = this.scene.physics.add.sprite(x,y-30,'energy');
         this.attack.body.setSize(this.attack.width - 30, this.attack.height - 30).setOffset(15, 15);
         this.attack.body.setAllowGravity(false);
 
@@ -40,6 +40,7 @@ class Attack {
         }
 
         this.attackParticles = this.scene.add.particles('die_particle');
+        this.collideParticles = this.scene.add.particles('energy');
         this.attackParticles.createEmitter({
             speed: 300,
             lifespan: 1000,
@@ -52,10 +53,26 @@ class Attack {
             blendMode: 'ADD',
             on: false
         });
+        this.collideParticles.createEmitter({
+            speed: 300,
+            lifespan: 300,
+            quantity: 10,
+            alpha: 1,
+            gravityY: 2000,
+            scale: {start: 1, end: 0},
+            //angle: { min: -180, max: 0 },
+            //follow: this.player,
+            //blendMode: 'ADD',
+            on: false
+        });
 
+        this.scene.physics.add.collider(this.attack, this.scene.sol, function (attack) {
+            this.collideParticles.emitParticleAt(this.attack.x +15, this.attack.y+15);
+            attack.destroy();
+        }, null, this);
 
         this.scene.physics.add.collider(this.attack, this.scene.monster, function (attack,monster) {
-            this.attackParticles.emitParticleAt(this.attack.x +32, this.attack.y+32);
+            this.attackParticles.emitParticleAt(this.attack.x +15, this.attack.y+15);
             attack.destroy();
             monster.destroy();
         }, null, this);
