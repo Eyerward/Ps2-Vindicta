@@ -8,7 +8,7 @@ class scene extends Phaser.Scene {
         this.load.image('save_off', 'assets/images/save_off.png');
         this.load.image('save_on', 'assets/images/save_on.png');
         this.load.image('die_particle', 'assets/images/die_particle.png');
-        this.load.image('switch_particle', 'assets/images/switch_particle.png');
+        this.load.image('fire_particle', 'assets/images/fire_particle.png');
         //Appel des différents Spritesheets : collectibles, pouvoirs et ennemis
         this.load.atlas('power_collect', 'assets/images/collectible_power.png', 'assets/images/collectible_atlas.json');
         this.load.atlas('life_collect', 'assets/images/collectible_life.png', 'assets/images/collectible_atlas.json');
