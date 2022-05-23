@@ -43,7 +43,7 @@ class Attack {
         this.collideParticles = this.scene.add.particles('energy');
         this.attackParticles.createEmitter({
             speed: 300,
-            lifespan: 1000,
+            lifespan: 500,
             quantity: 30,
             alpha: 1,
             gravityY: 1000,

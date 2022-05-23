@@ -89,7 +89,6 @@ class Player {
 
         /**VFX MULTIPLES**/
         this.switchParticles = this.scene.add.particles('energy');
-        this.jumpParticles = this.scene.add.particles('energy');
         this.switchParticles.createEmitter({
             speed: 200,
             lifespan: 500,
@@ -102,13 +101,16 @@ class Player {
             blendMode: 'ADD',
             on: false
         });
+
+        this.jumpParticles = this.scene.add.particles('fire_particle');
         this.jumpParticles.createEmitter({
             speed: 300,
             lifespan: 300,
             quantity: 5,
             alpha: 1,
+            tint:0x808080,
             gravityY: 2000,
-            scale: {start: 1, end: 0},
+            scale: {start: 0.5, end: 0},
             angle: { min: -135, max: -45 },
             //follow: this.player,
             //blendMode: 'ADD',

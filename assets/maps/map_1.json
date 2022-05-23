@@ -929,25 +929,13 @@
                 {
                  "gid":29,
                  "height":64,
-                 "id":78,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":64,
-                 "x":5248,
-                 "y":4672
-                }, 
-                {
-                 "gid":29,
-                 "height":64,
                  "id":79,
                  "name":"",
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":64,
-                 "x":6016,
+                 "x":6144,
                  "y":5120
                 }, 
                 {
@@ -1139,7 +1127,7 @@
  "nextobjectid":106,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.8.2",
+ "tiledversion":"1.8.1",
  "tileheight":64,
  "tilesets":[
         {

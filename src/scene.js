@@ -5,8 +5,7 @@ class scene extends Phaser.Scene {
         this.load.image('diamond_red', 'assets/images/diamond_red.png');
         this.load.image('enemy_blade', 'assets/images/enemy_blade.png');
         this.load.image('ladder', 'assets/images/ladder.png');
-        this.load.image('save_off', 'assets/images/save_off.png');
-        this.load.image('save_on', 'assets/images/save_on.png');
+        this.load.image('brasero', 'assets/images/brasero.png');
         this.load.image('die_particle', 'assets/images/die_particle.png');
         this.load.image('fire_particle', 'assets/images/fire_particle.png');
         //Appel des différents Spritesheets : collectibles, pouvoirs et ennemis
@@ -25,6 +24,22 @@ class scene extends Phaser.Scene {
         this.valueHurt = 2;
 
         this.screenWidth = 1000;
+        //VFX PARTICLES
+
+        this.smokeFX = {
+            frequency:250,
+            lifespan: 1500,
+            quantity:2,
+            x:{min:-32,max:32},
+            y:{min:-10,max:10},
+            tint:0x808080,
+            rotate: {min:-10,max:10},
+            speedX: { min: -10, max: 10 },
+            speedY: { min: -10, max: -20 },
+            scale: {start: 0, end: 1},
+            alpha: { start: 1, end: 0 },
+            //blendMode: Phaser.BlendModes.ADD,
+        };
 
         /**PRESETS**/
         //BG parallaxe et Map
@@ -111,8 +126,12 @@ class scene extends Phaser.Scene {
             immovable: true
         });
         map.getObjectLayer('Save').objects.forEach((save) => {
-            const saveSprite = this.physics.add.sprite(save.x, save.y - save.height, 'save_off').setOrigin(0);
+            const saveSprite = this.physics.add.sprite(save.x, save.y - save.height, 'brasero').setOrigin(0);
             this.save.add(saveSprite);
+            this.emitSmoke = this.add.particles('fire_particle');//On charge les particules à appliquer au layer
+            this.emitSmoke.createEmitter(this.smokeFX);
+            this.emitSmoke.x = save.x+32;
+            this.emitSmoke.y = save.y-55;
         });
 
         //ORBES COLLECTIBLES
@@ -137,8 +156,6 @@ class scene extends Phaser.Scene {
             // new Monster(this, monster.x, monster.y - monster.height);
         });
 
-        //VFX PARTICLES
-
 
         this.dieParticles = this.add.particles('die_particle');
         this.dieParticles.createEmitter({
@@ -153,6 +170,35 @@ class scene extends Phaser.Scene {
             blendMode: 'ADD',
             on: false
         });
+
+        this.fireParticles = this.add.particles('fire_particle');
+        this.fireParticles.createEmitter({
+            speed: 100,
+            lifespan: 1500,
+            quantity: 100,
+            //gravityY: 500,
+            scale: {start: 0.5, end: 1},
+            alpha: { start: 1, end: 0 },
+            angle: { min: -100, max: -80 },
+            blendMode: 'ADD',
+            on: false
+        });
+
+        this.fireFX = {
+            frequency:100,
+            lifespan: 2000,
+            quantity:10,
+            x:{min:-20,max:20},
+            y:{min:-10,max:0},
+            rotate: {min:-10,max:10},
+            speedX: { min: -20, max: 20 },
+            speedY: { min: -100, max: -10 },
+            scale: {start: 0, end: 1},
+            alpha: { start: 1, end: 0 },
+            blendMode: Phaser.BlendModes.ADD,
+        };
+
+
 
 
         /*****OVERLAPS ENTRE OBJECTS*****/
@@ -191,7 +237,11 @@ class scene extends Phaser.Scene {
         this.saveX = this.player.player.x;
         this.saveY = this.player.player.y;
         console.log("current", this.saveX, this.saveY);
-        save.visible = false;
+        this.emitFire = this.add.particles('fire_particle'); //On charge les particules à appliquer au layer
+        this.emitFire.createEmitter(this.fireFX); //On crée l'émetteur
+        this.emitFire.x = save.x +30;
+        this.emitFire.y = save.y+15;
+        this.fireParticles.emitParticleAt(save.x+30, save.y+15);
         save.body.enable = false;
     }
 
