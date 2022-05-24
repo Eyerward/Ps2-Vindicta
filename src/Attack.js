@@ -71,16 +71,16 @@ class Attack {
             attack.destroy();
         }, null, this);
 
-        // this.scene.physics.add.collider(this.attack, this.scene.monster, function (attack,monster) {
-        //     this.attackParticles.emitParticleAt(this.attack.x, this.attack.y);
-        //     attack.destroy();
-        //     monster.destroy();
-        // }, null, this);
-        this.scene.physics.add.collider(this.attack, this.scene.monster.monster, function (attack, monster) {
+        this.scene.physics.add.collider(this.attack, this.scene.monster, function (attack,monster) {
             this.attackParticles.emitParticleAt(this.attack.x, this.attack.y);
             attack.destroy();
             monster.destroy();
         }, null, this);
+        /**this.scene.physics.add.collider(this.attack, this.scene.monster.monster, function (attack, monster) {
+            this.attackParticles.emitParticleAt(this.attack.x, this.attack.y);
+            attack.destroy();
+            monster.destroy();
+        }, null, this);**/
     }
 
 }

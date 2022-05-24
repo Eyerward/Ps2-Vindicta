@@ -153,17 +153,17 @@ class scene extends Phaser.Scene {
         });**/
 
         //ENNEMIS
-        // this.monster = this.physics.add.group({
-        //     allowGravity: false,
-        //     immovable: true
-        // });
-        // map.getObjectLayer('Ennemy').objects.forEach((monster) => {
-        //     const monsterSprite = this.physics.add.sprite(monster.x, monster.y - monster.height, 'enemy_blade').setOrigin(0);
-        //     this.monster.add(monsterSprite);
-        //     // new Monster(this, monster.x, monster.y - monster.height);
-        // });
+        this.monster = this.physics.add.group({
+            allowGravity: false,
+            immovable: true
+        });
+        map.getObjectLayer('Ennemy').objects.forEach((monster) => {
+            const monsterSprite = this.physics.add.sprite(monster.x, monster.y - monster.height, 'enemy_blade').setOrigin(0);
+            this.monster.add(monsterSprite);
+            // new Monster(this, monster.x, monster.y - monster.height);
+        });
 
-        this.monster = new Monster(this, this.player, 1200, 5400);
+        // this.monster = new Monster(this, this.player, 1200, 5400);
 
 
         this.dieParticles = this.add.particles('die_particle');
@@ -229,7 +229,7 @@ class scene extends Phaser.Scene {
         //CHECKPOINT
         this.physics.add.overlap(this.player.player,this.save, this.checkpoint, null, this);
         //ENNEMIS
-        this.physics.add.collider(this.player.player, this.monster.monster, this.playerHurt, null, this);
+        this.physics.add.collider(this.player.player, this.monster, this.playerHurt, null, this);
         //COLLECTIBLES
         this.physics.add.collider(this.collect.collect, this.sol);
         this.physics.add.overlap(this.player.player, this.collect.collect,this.collected, null, this);
@@ -379,9 +379,9 @@ class scene extends Phaser.Scene {
     }
     update(){
 
-        if ((this.monster.monster.x < this.player.player.x + 640) && (this.monster.monster.x > this.player.player.x - 640)) {
+        /**if ((this.monster.monster.x < this.player.player.x + 640) && (this.monster.monster.x > this.player.player.x - 640)) {
             this.monster.trackPlayer();
-        }
+        }**/
 
         /**QUELQUES CONDITIONS D'ANIMATION AVEC CONDITIONS DE PARALLAXE**/
 
