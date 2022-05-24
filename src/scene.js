@@ -153,15 +153,17 @@ class scene extends Phaser.Scene {
         });**/
 
         //ENNEMIS
-        this.monster = this.physics.add.group({
-            allowGravity: false,
-            immovable: true
-        });
-        map.getObjectLayer('Ennemy').objects.forEach((monster) => {
-            const monsterSprite = this.physics.add.sprite(monster.x, monster.y - monster.height, 'enemy_blade').setOrigin(0);
-            this.monster.add(monsterSprite);
-            // new Monster(this, monster.x, monster.y - monster.height);
-        });
+        // this.monster = this.physics.add.group({
+        //     allowGravity: false,
+        //     immovable: true
+        // });
+        // map.getObjectLayer('Ennemy').objects.forEach((monster) => {
+        //     const monsterSprite = this.physics.add.sprite(monster.x, monster.y - monster.height, 'enemy_blade').setOrigin(0);
+        //     this.monster.add(monsterSprite);
+        //     // new Monster(this, monster.x, monster.y - monster.height);
+        // });
+
+        this.monster = new Monster(this, this.player, 2000, 5000);
 
 
         this.dieParticles = this.add.particles('die_particle');
