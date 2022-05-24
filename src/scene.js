@@ -89,7 +89,7 @@ class scene extends Phaser.Scene {
         /***ESSAI DE COLLECTIBLE**/
         this.collect = new Collect(this);
         /****INITIALISATION PLAYER AVEC SA POSITION ET SA CAMERA*****/
-        this.player = new Player(this);
+        this.player = new Player(this, this.monster);
         this.saveX = this.player.player.x;
         this.saveY = this.player.player.y;
         this.cameras.main.startFollow(this.player.player,true,0.1,0.1,0,150);
@@ -163,7 +163,7 @@ class scene extends Phaser.Scene {
         //     // new Monster(this, monster.x, monster.y - monster.height);
         // });
 
-        this.monster = new Monster(this, this.player, 2000, 5000);
+        this.monster = new Monster(this, this.player, 1200, 5400);
 
 
         this.dieParticles = this.add.particles('die_particle');
@@ -229,7 +229,7 @@ class scene extends Phaser.Scene {
         //CHECKPOINT
         this.physics.add.overlap(this.player.player,this.save, this.checkpoint, null, this);
         //ENNEMIS
-        this.physics.add.collider(this.player.player, this.monster, this.playerHurt, null, this);
+        this.physics.add.collider(this.player.player, this.monster.monster, this.playerHurt, null, this);
         //COLLECTIBLES
         this.physics.add.collider(this.collect.collect, this.sol);
         this.physics.add.overlap(this.player.player, this.collect.collect,this.collected, null, this);
@@ -378,6 +378,10 @@ class scene extends Phaser.Scene {
         });
     }
     update(){
+
+        if ((this.monster.monster.x < this.player.player.x + 640) && (this.monster.monster.x > this.player.player.x - 640)) {
+            this.monster.trackPlayer();
+        }
 
         /**QUELQUES CONDITIONS D'ANIMATION AVEC CONDITIONS DE PARALLAXE**/
 

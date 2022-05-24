@@ -1,8 +1,7 @@
 class Attack {
-    constructor(scene, x, y, flip, speed, reap, monster) {
+    constructor(scene, x, y, flip, speed, reap) {
 
         this.scene = scene;
-        this.monster = monster;
 
         /**APPEL DU SPRITE D'ATTAQUE**/
 
@@ -77,6 +76,11 @@ class Attack {
         //     attack.destroy();
         //     monster.destroy();
         // }, null, this);
+        this.scene.physics.add.collider(this.attack, this.scene.monster.monster, function (attack, monster) {
+            this.attackParticles.emitParticleAt(this.attack.x, this.attack.y);
+            attack.destroy();
+            monster.destroy();
+        }, null, this);
     }
 
 }

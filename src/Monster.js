@@ -9,9 +9,6 @@ class Monster {
         // this.monster.body.setSize(this.monster.width, this.monster.height+50).setOffset(0, 0);
         this.monster.body.setAllowGravity(false);
 
-        if ((this.monster.x < this.player.player.x + 640) && (this.monster.x > this.player.player.x - 640)) {
-            this.trackPlayer();
-        }
 
     }
 
@@ -30,5 +27,6 @@ class Monster {
         if(this.monster.y > this.player.player.y) {
             this.monster.setVelocityY(-300);
         }
+
     }
 }

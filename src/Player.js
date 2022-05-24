@@ -1,6 +1,6 @@
 class Player {
 
-    constructor(scene/*,x,y*/) {
+    constructor(scene) {
 
         this.scene = scene;
 
