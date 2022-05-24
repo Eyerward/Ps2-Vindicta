@@ -11,6 +11,8 @@ class Player {
 
 
         this.player = this.scene.physics.add.sprite(800, 5700, 'player');
+        //this.player = this.scene.physics.add.sprite(0, 0, 'player');
+
         //Taille de la hitbox du Player
         this.player.body.setSize(this.player.width-70, this.player.height).setOffset(35, 0);
         this.player.body.setBounce(0.5,0);

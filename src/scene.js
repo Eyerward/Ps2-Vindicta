@@ -1,6 +1,5 @@
 class scene extends Phaser.Scene {
     preload(){
-        this.load.image('background', 'assets/images/bg_parallaxe.png');
         this.load.image('diamond_blue', 'assets/images/diamond_blue.png');
         this.load.image('diamond_red', 'assets/images/diamond_red.png');
         this.load.image('enemy_blade', 'assets/images/enemy_blade.png');
@@ -15,7 +14,10 @@ class scene extends Phaser.Scene {
         //Appel du spritesheet du joueur avec sa ref JSON
         this.load.atlas('player', 'assets/images/reagan_player.png','assets/images/reagan_player_atlas.json');
         //Appel de la map Tiled et de ses tuiles
-        this.load.image('tiles','assets/tileset/platform_vindicta_v4.png')
+        this.load.image('tiles','assets/tileset/platform_vindicta_v4.png');
+        this.load.image('bg1','assets/tileset/bg1_mountain.png');
+        this.load.image('bg2','assets/tileset/bg2_mountain.png');
+        this.load.image('bg3','assets/tileset/bg3_sky.png');
         this.load.tilemapTiledJSON('map_1','assets/maps/map_1.json');
     }
     create(){
@@ -24,7 +26,8 @@ class scene extends Phaser.Scene {
         this.valueHurt = 2;
 
         this.screenWidth = 1000;
-        //VFX PARTICLES
+
+        //VFX PARTICLES D2J0 PRESENTES SUR LA MAP
 
         this.smokeFX = {
             frequency:250,
@@ -42,15 +45,19 @@ class scene extends Phaser.Scene {
         };
 
         /**PRESETS**/
-        //BG parallaxe et Map
-        this.parallaxe = this.add.container(0,0);
-
-        this.background = this.add.image(0, 4500,'background').setOrigin(0, 0);
-        this.background.setScale(1.5, 1.5);
-        this.parallaxe.add(this.background);
+        //APPEL DES LAYERS ET CREATION PLATFORMES ET PARALLAXE
 
         const map = this.make.tilemap({ key: 'map_1' });
+
+        const sky = map.addTilesetImage('vindicta_sky','bg3');
+        const bg2 = map.addTilesetImage('vindicta_bg2','bg2');
+        const bg1 = map.addTilesetImage('vindicta_bg1','bg1');
         const tileset = map.addTilesetImage('vindicta_platform', 'tiles');
+
+        this.sky = map.createLayer('BG3', sky, 0, -5000);
+        this.bg2 = map.createLayer('BG2', bg2, 0, -4500);
+        this.bg1 = map.createLayer('BG1', bg1, 0, -4300);
+
         const grotte = map.createStaticLayer('Grotte', tileset, 0, 0);
         const platforms = map.createStaticLayer('Platforms', tileset, 0, 0);
         const staticObjects = map.createStaticLayer('StaticObjects', tileset, 0, 0);
@@ -198,6 +205,16 @@ class scene extends Phaser.Scene {
             blendMode: Phaser.BlendModes.ADD,
         };
 
+        /**PARALLAXE**/
+        this.sky.scrollFactorX = 0;
+        this.sky.scrollFactorY = 0;
+
+        this.bg2.scrollFactorX = 0.1;
+        this.bg2.scrollFactorY = 0.1;
+
+        this.bg1.scrollFactorX = 0.15;
+        this.bg1.scrollFactorY = 0.15;
+
 
 
 
@@ -217,7 +234,6 @@ class scene extends Phaser.Scene {
 
         /**INPUT MOVEMENTS**/
         this.initKeyboard();
-        this.parallaxe.scrollFactorX = 0.1;
 
     }
 
@@ -241,7 +257,7 @@ class scene extends Phaser.Scene {
         this.emitFire.createEmitter(this.fireFX); //On crée l'émetteur
         this.emitFire.x = save.x +30;
         this.emitFire.y = save.y+15;
-        this.fireParticles.emitParticleAt(save.x+30, save.y+15);
+        this.fireParticles.emitParticleAt(save.x+30, save.y+10);
         save.body.enable = false;
     }
 
