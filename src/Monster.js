@@ -12,21 +12,21 @@ class Monster {
 
     }
 
-    trackPlayer(){
-        if (this.monster.x > this.player.player.x) {
-            this.monster.setVelocityX(-300);
-            this.monster.setFlipX(true);
+    monsterGestion(monster, player){
+        this.dist = Phaser.Math.Distance.BetweenPoints(player, monster);
+        if(this.dist < 750){
+            this.trackPlayer(monster, player);
         }
-        if(this.monster.x < this.player.player.x) {
-            this.monster.setVelocityX(300);
-            this.monster.setFlipX(false);
+        else{
+            this.idle(monster);
         }
-        if(this.monster.y < this.player.player.y) {
-            this.monster.setVelocityY(300);
-        }
-        if(this.monster.y > this.player.player.y) {
-            this.monster.setVelocityY(-300);
-        }
+    }
 
+    trackPlayer(monster, player){
+        this.scene.physics.moveToObject(monster, player, 300);
+    }
+    idle(monster){
+        monster.setVelocityX(0);
+        monster.setVelocityY(0);
     }
 }

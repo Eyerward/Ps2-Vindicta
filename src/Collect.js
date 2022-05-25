@@ -1,13 +1,13 @@
 class Collect {
-    constructor(scene/*, x, y*/) {
+    constructor(scene, x, y) {
         this.scene = scene;
 
         this.valueCollect = 10;
 
-        this.collect = this.scene.physics.add.sprite(1100, 5500, 'power_collect');
+        this.power = this.scene.physics.add.sprite(x-60, y, 'power_collect');
         //Taille de la hitbox du collectible
-        this.collect.body.setSize(this.collect.width-40, this.collect.height).setOffset(20, 20);
-        this.collect.body.setBounce(0.5);
+        this.power.body.setSize(this.power.width-40, this.power.height).setOffset(20, 20);
+        this.power.body.setBounce(0.5);
 
         /**Animation**/
         this.scene.anims.create({
@@ -21,7 +21,7 @@ class Collect {
             yoyo: true,
             repeat: -1
         });
-        this.collect.play('wavingPower', true);
+        this.power.play('wavingPower', true);
 
         this.powerParticles = this.scene.add.particles('power_collect');
         this.powerParticles.createEmitter({
@@ -32,7 +32,7 @@ class Collect {
             gravityY: 800,
             scale: {start: 1, end: 0},
             angle: { min: -180, max: 0 },
-            follow: this.collect.collect,
+            follow: this.power.collect,
             blendMode: 'ADD',
             on: false
         });

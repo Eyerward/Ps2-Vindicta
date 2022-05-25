@@ -29,18 +29,19 @@ class Attack {
         }
 
         if (reap === true){
+            this.attack.setVisible(false);
             this.scene.time.delayedCall(200,()=>{
                 this.attack.destroy()
             });
         }
         else {
+            this.attack.setVisible(true);
             this.scene.time.delayedCall(1000, () => {
                 this.attack.destroy()
             });
         }
 
         this.attackParticles = this.scene.add.particles('die_particle');
-        this.collideParticles = this.scene.add.particles('energy');
         this.attackParticles.createEmitter({
             speed: 300,
             lifespan: 500,
@@ -49,10 +50,10 @@ class Attack {
             gravityY: 1000,
             scale: {start: 2, end: 0},
             angle: { min: -180, max: 0 },
-            //follow: this.player,
-            blendMode: 'ADD',
+            // blendMode: 'ADD',
             on: false
         });
+        this.collideParticles = this.scene.add.particles('energy');
         this.collideParticles.createEmitter({
             speed: 300,
             lifespan: 300,
@@ -71,11 +72,11 @@ class Attack {
             attack.destroy();
         }, null, this);
 
-        this.scene.physics.add.collider(this.attack, this.scene.monster, function (attack,monster) {
+        /**this.scene.physics.add.collider(this.attack, this.scene.monster, function (attack,monster) {
             this.attackParticles.emitParticleAt(this.attack.x, this.attack.y);
             attack.destroy();
             monster.destroy();
-        }, null, this);
+        }, null, this);**/
         /**this.scene.physics.add.collider(this.attack, this.scene.monster.monster, function (attack, monster) {
             this.attackParticles.emitParticleAt(this.attack.x, this.attack.y);
             attack.destroy();

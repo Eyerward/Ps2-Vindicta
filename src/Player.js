@@ -4,10 +4,11 @@ class Player {
 
         this.scene = scene;
 
-        this.life = 200;
-        this.power = 0;
+        this.life = 500;
+        this.power = 500;
         this.reap = true;
         this.switched = true;
+        this.lightning = true;
 
 
         this.player = this.scene.physics.add.sprite(800, 5700, 'player');
@@ -127,7 +128,6 @@ class Player {
         this.player.charge = true;
         this.player.jumping = false;
         this.player.falling = false;
-        this.player.hurt = false;
         this.scene.physics.add.collider(this.player, this.scene.sol);
     }
 
@@ -164,6 +164,21 @@ class Player {
                 this.scene.time.delayedCall(300, () => {
                     this.player.charge = true
                 });
+            }
+        }
+    }
+
+    special(){
+        if(this.lightning === true) {
+            console.log('ATTAQUE SPECIAAAAAAAALE !!!!!');
+            this.lightning = false;
+            if (this.power >= 500) {
+                this.scene.time.addEvent({
+                    delay: 300,
+                    callback: () => {
+                        this.power = 0;
+                        new Special(this.scene, this.player.x, this.player.y);
+                    }});
             }
         }
     }

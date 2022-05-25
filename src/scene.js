@@ -87,7 +87,7 @@ class scene extends Phaser.Scene {
         });
 
         /***ESSAI DE COLLECTIBLE**/
-        this.collect = new Collect(this);
+        this.collect = new Collect(this,1100, 5500);
         /****INITIALISATION PLAYER AVEC SA POSITION ET SA CAMERA*****/
         this.player = new Player(this, this.monster);
         this.saveX = this.player.player.x;
@@ -141,43 +141,21 @@ class scene extends Phaser.Scene {
             this.emitSmoke.y = save.y-55;
         });
 
-        //ORBES COLLECTIBLES
-
-        /**this.powerCollect = this.physics.add.group({
-            allowGravity: false,
-            immovable: true
-        });
-        map.getObjectLayer('CollectiblePower').objects.forEach((powerCollect) => {
-            let powerCollect1 = new PowerCollect(this, powerCollect.x, powerCollect.y - powerCollect.height*2);
-            this.powerCollect.add(powerCollect1);
-        });**/
 
         //ENNEMIS
-        this.monster = this.physics.add.group({
-            allowGravity: false,
-            immovable: true
-        });
-        map.getObjectLayer('Ennemy').objects.forEach((monster) => {
-            const monsterSprite = this.physics.add.sprite(monster.x, monster.y - monster.height, 'enemy_blade').setOrigin(0);
-            this.monster.add(monsterSprite);
-            // new Monster(this, monster.x, monster.y - monster.height);
-        });
-
-        // this.monster = new Monster(this, this.player, 1200, 5400);
 
 
-        this.dieParticles = this.add.particles('die_particle');
-        this.dieParticles.createEmitter({
-            speed: 500,
-            lifespan: 500,
-            quantity: 50,
-            alpha: 0.5,
-            gravity: {x: 1000, y: 10000},
+
+        this.respawnFX = this.add.particles('energy');
+        this.respawnFX.createEmitter({
+            lifespan: 200,
+            quantity: 10,
+            speedX: { min: -300, max: 300 },
+            speedY: { min: -1000, max: -100 },
+            gravityY: 500,
             scale: {start: 1, end: 0},
-            //angle: { min: -180, max: 0 },
-            follow: this.monster,
+            alpha: { start: 1, end: 0 },
             blendMode: 'ADD',
-            on: false
         });
 
         this.fireParticles = this.add.particles('fire_particle');
@@ -231,8 +209,8 @@ class scene extends Phaser.Scene {
         //ENNEMIS
         this.physics.add.collider(this.player.player, this.monster, this.playerHurt, null, this);
         //COLLECTIBLES
-        this.physics.add.collider(this.collect.collect, this.sol);
-        this.physics.add.overlap(this.player.player, this.collect.collect,this.collected, null, this);
+        this.physics.add.collider(this.collect.power, this.sol);
+        this.physics.add.overlap(this.player.player, this.collect.power,this.collected, null, this);
 
         /**INPUT MOVEMENTS**/
         this.initKeyboard();
@@ -266,28 +244,23 @@ class scene extends Phaser.Scene {
     collected(){
         this.player.power += this.collect.valueCollect;
         console.log(this.player.power, "power");
-        this.collect.powerParticles.emitParticleAt(this.collect.collect.body.x, this.collect.collect.body.y);
-        this.collect.collect.destroy();
+        this.collect.powerParticles.emitParticleAt(this.collect.power.body.x, this.collect.power.body.y);
+        this.collect.power.destroy();
     }
 
     playerHurt(){
-        this.player.player.hurt = true;
         this.player.life -= this.valueHurt;
         console.log(this.player.life, "life");
-        if (this.player.player.hurt === true) {
-            this.player.player.hurt = false;
-            this.player.player.setAlpha(0.5);
-            let hurt = this.tweens.add({
-                targets: this.player.player,
-                alpha: 1,
-                duration: 100,
-                ease: 'Linear',
-                repeat: 3,
-            });
-            this.time.delayedCall(300,()=>{
-                this.player.player.hurt = true;
-            });
-        }
+        this.player.player.setAlpha(0.3);
+        let hurt = this.tweens.add({
+            targets: this.player.player,
+            alpha: 1,
+            tint: false,
+            duration: 50,
+            ease: 'Linear',
+            repeat: 10,
+        });
+
     }
 
     playerDeath(){
@@ -296,6 +269,7 @@ class scene extends Phaser.Scene {
         this.time.addEvent({
             delay: 1000,
             callback: () => {
+                this.respawnFX.emitParticleAt(this.player.player.x, this.player.player.y+50);
                 this.player.player.enableBody();
                 this.player.player.setVisible(true);
                 this.player.player.x = this.saveX;
@@ -345,8 +319,11 @@ class scene extends Phaser.Scene {
                 case Phaser.Input.Keyboard.KeyCodes.SPACE:
                     me.player.attack();
                     break;
-                case Phaser.Input.Keyboard.KeyCodes.C:
+                case Phaser.Input.Keyboard.KeyCodes.R:
                     me.player.charaSwitch();
+                    break;
+                case Phaser.Input.Keyboard.KeyCodes.E:
+                    me.player.special();
                     break;
             }
         });
@@ -374,14 +351,16 @@ class scene extends Phaser.Scene {
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.C:
                     me.player.switched =true;
+                    break;
+                case Phaser.Input.Keyboard.KeyCodes.E:
+                    me.player.lightning = true;
+                    break;
             }
         });
     }
     update(){
 
-        /**if ((this.monster.monster.x < this.player.player.x + 640) && (this.monster.monster.x > this.player.player.x - 640)) {
-            this.monster.trackPlayer();
-        }**/
+        this.monster.monsterGestion(this.monster.monster, this.player.player);
 
         /**QUELQUES CONDITIONS D'ANIMATION AVEC CONDITIONS DE PARALLAXE**/
 
