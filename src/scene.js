@@ -1,5 +1,8 @@
 class scene extends Phaser.Scene {
     preload(){
+        this.load.image('aranea', 'assets/images/aranea.png');
+        this.load.image('wall', 'assets/images/wall.png');
+
         this.load.image('diamond_blue', 'assets/images/diamond_blue.png');
         this.load.image('diamond_red', 'assets/images/diamond_red.png');
         this.load.image('enemy_blade', 'assets/images/enemy_blade.png');
@@ -10,7 +13,7 @@ class scene extends Phaser.Scene {
         //Appel des différents Spritesheets : collectibles, pouvoirs et ennemis
         this.load.atlas('power_collect', 'assets/images/collectible_power.png', 'assets/images/collectible_atlas.json');
         this.load.atlas('life_collect', 'assets/images/collectible_life.png', 'assets/images/collectible_atlas.json');
-        this.load.atlas('energy', 'assets/images/energy_blade.png', 'assets/images/energy.json')
+        this.load.atlas('energy', 'assets/images/energy_blade.png', 'assets/images/energy.json');
         //Appel du spritesheet du joueur avec sa ref JSON
         this.load.atlas('player', 'assets/images/reagan_player.png','assets/images/reagan_player_atlas.json');
         //Appel de la map Tiled et de ses tuiles
@@ -65,6 +68,7 @@ class scene extends Phaser.Scene {
         this.mapCache = cache;
         this.mapCache.visible = true;
 
+
         /**INTERACTIONS AVEC LA MAP**/
         //COLLISIONS
         this.sol = this.physics.add.group({
@@ -85,14 +89,6 @@ class scene extends Phaser.Scene {
             const cacheSprite = this.physics.add.sprite(cache.x+(cache.width*0.5),cache.y+(cache.height*0.5)).setSize(cache.width,cache.height);
             this.cache.add(cacheSprite);
         });
-
-        /***ESSAI DE COLLECTIBLE**/
-        this.collect = new Collect(this,1100, 5500);
-        /****INITIALISATION PLAYER AVEC SA POSITION ET SA CAMERA*****/
-        this.player = new Player(this, this.monster);
-        this.saveX = this.player.player.x;
-        this.saveY = this.player.player.y;
-        this.cameras.main.startFollow(this.player.player,true,0.1,0.1,0,150);
 
 
         /*******GAME OBJECTS*******/
@@ -141,10 +137,30 @@ class scene extends Phaser.Scene {
             this.emitSmoke.y = save.y-55;
         });
 
+        //MURS ENNEMIS
+        this.walls = this.physics.add.group({
+            allowGravity: false,
+            immovable: true
+        });
+        map.getObjectLayer('Wall').objects.forEach((wall) => {
+            const wallSprite = this.physics.add.sprite(wall.x, wall.y - 128 - wall.height, 'wall').setOrigin(0);
+            this.walls.add(wallSprite);
+        });
 
-        //ENNEMIS
+        /***ESSAI DE COLLECTIBLE**/
+        this.collect = new Collect(this,1100, 5500);
 
+        /**************INITIALISATION PLAYER AVEC SA POSITION ET SA CAMERA***************/
+        this.player = new Player(this, this.monster);
+        this.attack = new Attack(this, 0, 0, this.player.player.flipX, this.player.player.body.velocity.x, this.player.reap)
+        this.saveX = this.player.player.x;
+        this.saveY = this.player.player.y;
+        this.cameras.main.startFollow(this.player.player,true,0.1,0.1,0,150);
 
+        /**INITIALISATION ANTAGONISTE**/
+        this.monster = new Monster(this, this.player.player, 0, 5500);
+
+        /*****VFX EN VRAC*****/
 
         this.respawnFX = this.add.particles('energy');
         this.respawnFX.createEmitter({
@@ -206,11 +222,15 @@ class scene extends Phaser.Scene {
         this.physics.add.overlap(this.player.player,this.outLad, this.notClimb.bind(this), null, this);
         //CHECKPOINT
         this.physics.add.overlap(this.player.player,this.save, this.checkpoint, null, this);
-        //ENNEMIS
-        this.physics.add.collider(this.player.player, this.monster, this.playerHurt, null, this);
+        //MURS VISQUEUX
+        this.physics.add.collider(this.player.player,this.walls, this.playerHurt, null, this);
+        //ANTAGONISTE
+        this.physics.add.collider(this.player.player, this.monster.monster, this.playerHurt, null, this);
         //COLLECTIBLES
         this.physics.add.collider(this.collect.power, this.sol);
-        this.physics.add.overlap(this.player.player, this.collect.power,this.collected, null, this);
+        this.physics.add.collider(this.collect.life, this.sol);
+        this.physics.add.overlap(this.player.player, this.collect.power,this.powered, null, this);
+        this.physics.add.overlap(this.player.player, this.collect.life,this.healed, null, this);
 
         /**INPUT MOVEMENTS**/
         this.initKeyboard();
@@ -241,11 +261,17 @@ class scene extends Phaser.Scene {
         save.body.enable = false;
     }
 
-    collected(){
+    powered(){
         this.player.power += this.collect.valueCollect;
         console.log(this.player.power, "power");
         this.collect.powerParticles.emitParticleAt(this.collect.power.body.x, this.collect.power.body.y);
         this.collect.power.destroy();
+    }
+    healed(){
+        this.player.life += this.collect.valueCollect;
+        console.log(this.player.power, "life");
+        this.collect.lifeParticles.emitParticleAt(this.collect.life.body.x, this.collect.life.body.y);
+        this.collect.life.destroy();
     }
 
     playerHurt(){
@@ -266,23 +292,24 @@ class scene extends Phaser.Scene {
     playerDeath(){
         this.player.player.setVisible(false);
         this.player.player.disableBody();
+        this.player.player.climbing = false;
         this.time.addEvent({
-            delay: 1000,
+            delay: 500,
             callback: () => {
                 this.respawnFX.emitParticleAt(this.player.player.x, this.player.player.y+50);
                 this.player.player.enableBody();
                 this.player.player.setVisible(true);
                 this.player.player.x = this.saveX;
                 this.player.player.y = this.saveY;
-                this.player.life = 100;
+                this.player.life = 500;
                 this.player.power = 0;
             }});
     }
 
-    // monsterHurt(monster){
-    //     if (monster.life <= 0){
-    //         monster
-    //     }
+    // monsterHurt(){}
+
+    // monsterDeath(monster){
+    //
     // }
 
 

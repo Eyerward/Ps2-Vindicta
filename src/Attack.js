@@ -43,14 +43,18 @@ class Attack {
 
         this.attackParticles = this.scene.add.particles('die_particle');
         this.attackParticles.createEmitter({
-            speed: 300,
+            frequency:100,
             lifespan: 500,
-            quantity: 30,
-            alpha: 1,
-            gravityY: 1000,
+            quantity:50,
+            gavityY: 500,
+            x:{min:-30,max:300},
+            y:{min:-1000,max:1000},
+            rotate: {min:-10,max:10},
+            speedX: { min: -500, max: 500 },
+            speedY: { min: -100, max: 0 },
             scale: {start: 2, end: 0},
-            angle: { min: -180, max: 0 },
-            // blendMode: 'ADD',
+            alpha: { start: 1, end: 0 },
+            //blendMode: Phaser.BlendModes.ADD,
             on: false
         });
         this.collideParticles = this.scene.add.particles('energy');
@@ -72,11 +76,11 @@ class Attack {
             attack.destroy();
         }, null, this);
 
-        /**this.scene.physics.add.collider(this.attack, this.scene.monster, function (attack,monster) {
-            this.attackParticles.emitParticleAt(this.attack.x, this.attack.y);
+        this.scene.physics.add.collider(this.attack, this.scene.walls, function (attack,wall) {
+            this.attackParticles.emitParticleAt(wall.x + 32, wall.y + 128);
             attack.destroy();
-            monster.destroy();
-        }, null, this);**/
+            wall.destroy();
+        }, null, this);
         /**this.scene.physics.add.collider(this.attack, this.scene.monster.monster, function (attack, monster) {
             this.attackParticles.emitParticleAt(this.attack.x, this.attack.y);
             attack.destroy();
