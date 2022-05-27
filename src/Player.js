@@ -160,7 +160,7 @@ class Player {
         if(this.player.climbing === false) {
             if (this.player.charge === true) {
                 this.player.charge = false;
-                new Attack(this.scene, this.player.x, this.player.y, this.player.flipX, this.player.body.velocity.x, this.reap);
+                this.hit = new Attack(this.scene, this.player.x, this.player.y, this.player.flipX, this.player.body.velocity.x, this.reap);
                 this.scene.time.delayedCall(300, () => {
                     this.player.charge = true
                 });

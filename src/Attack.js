@@ -2,7 +2,7 @@ class Attack {
     constructor(scene, x, y, flip, speed, reap) {
 
         this.scene = scene;
-
+        this.reap = reap;
         /**APPEL DU SPRITE D'ATTAQUE**/
 
         this.attack = this.scene.physics.add.sprite(x,y-30,'energy');
@@ -28,14 +28,14 @@ class Attack {
             this.attack.setVelocityX(speed + 650);
         }
 
-        if (reap === true){
-            this.attack.setVisible(false);
+        if (this.reap === true){
+            //this.attack.setVisible(false);
             this.scene.time.delayedCall(200,()=>{
                 this.attack.destroy()
             });
         }
         else {
-            this.attack.setVisible(true);
+            //this.attack.setVisible(true);
             this.scene.time.delayedCall(1000, () => {
                 this.attack.destroy()
             });
@@ -81,11 +81,33 @@ class Attack {
             attack.destroy();
             wall.destroy();
         }, null, this);
-        /**this.scene.physics.add.collider(this.attack, this.scene.monster.monster, function (attack, monster) {
-            this.attackParticles.emitParticleAt(this.attack.x, this.attack.y);
-            attack.destroy();
-            monster.destroy();
-        }, null, this);**/
+
+
+        this.scene.physics.add.collider(this.attack, this.scene.monster.monster, this.monsterHurt, null, this);
+
+
+    }
+
+    monsterHurt(){
+        this.attack.destroy();
+        if (this.reap === true){
+            this.scene.monster.life -= 10;
+        }
+        else if (this.reap === false){
+            this.scene.monster.life -= 5;
+        }
+
+        this.scene.monster.monster.setAlpha(0.3);
+        let hurt = this.scene.tweens.add({
+            targets: this.scene.monster.monster,
+            alpha: 1,
+            tint: false,
+            duration: 50,
+            ease: 'Linear',
+            repeat: 5,
+        });
+        this.scene.monster.hurtParticles.emitParticleAt(this.scene.monster.monster.x, this.scene.monster.monster.y);
+        console.log(this.scene.monster.life, 'Mlife');
     }
 
 }

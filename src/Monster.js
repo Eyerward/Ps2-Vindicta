@@ -1,16 +1,27 @@
 class Monster {
-    constructor(scene, player, x, y) {
+    constructor(scene, player) {
         this.scene = scene;
         this.player = player;
         this.onScreen = false;
 
         this.life = 100;
 
-        this.monster = this.scene.physics.add.sprite(x, y, 'aranea');
+        this.monster = this.scene.physics.add.sprite(12800, 3700, 'aranea');
         // this.monster.body.setSize(this.monster.width, this.monster.height+50).setOffset(0, 0);
         this.monster.body.setAllowGravity(false);
         this.monster.body.setCircle(64);
 
+        this.hurtParticles = this.scene.add.particles('die_particle');
+        this.hurtParticles.createEmitter({
+            speed: 300,
+            lifespan: 700,
+            quantity: 10,
+            gravityY: 500,
+            scale: {start: 1, end: 0},
+            //angle: { min: -180, max: 0 },
+            blendMode: 'ADD',
+            on: false
+        });
 
     }
 
@@ -35,7 +46,7 @@ class Monster {
     }
 
     trackPlayer(monster, player){
-        this.scene.physics.moveToObject(monster, player, 300);
+        this.scene.physics.moveToObject(monster, player, 200);
         if (player.x < monster.x){
             monster.setFlipX(true);
         }

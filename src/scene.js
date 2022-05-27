@@ -25,10 +25,6 @@ class scene extends Phaser.Scene {
     }
     create(){
 
-        //DATA
-        this.valueHurt = 2;
-
-        this.screenWidth = 1000;
 
         //VFX PARTICLES D2J0 PRESENTES SUR LA MAP
 
@@ -151,14 +147,16 @@ class scene extends Phaser.Scene {
         this.collect = new Collect(this,1100, 5500);
 
         /**************INITIALISATION PLAYER AVEC SA POSITION ET SA CAMERA***************/
-        this.player = new Player(this, this.monster);
-        this.attack = new Attack(this, 0, 0, this.player.player.flipX, this.player.player.body.velocity.x, this.player.reap)
+        this.player = new Player(this);
+        this.monster = new Monster(this, this.player.player);
         this.saveX = this.player.player.x;
         this.saveY = this.player.player.y;
+        this.monsterSpawnX = this.monster.monster.x;
+        this.monsterSpawny = this.monster.monster.y;
         this.cameras.main.startFollow(this.player.player,true,0.1,0.1,0,150);
 
         /**INITIALISATION ANTAGONISTE**/
-        this.monster = new Monster(this, this.player.player, 0, 5500);
+
 
         /*****VFX EN VRAC*****/
 
@@ -306,11 +304,22 @@ class scene extends Phaser.Scene {
             }});
     }
 
-    // monsterHurt(){}
 
-    // monsterDeath(monster){
-    //
-    // }
+
+    monsterDeath(){
+        this.monster.monster.setVisible(false);
+        this.monster.monster.disableBody();
+        this.time.addEvent({
+            delay: 500,
+            callback: () => {
+                this.respawnFX.emitParticleAt(this.monster.monster.x, this.monster.monster.y);
+                this.monster.monster.enableBody();
+                this.monster.monster.setVisible(true);
+                this.monster.monster.x = this.monsterSpawnX;
+                this.monster.monster.y = this.monsterSpawny;
+                this.monster.life = 100;
+            }});
+    }
 
 
 
@@ -376,7 +385,7 @@ class scene extends Phaser.Scene {
                 case Phaser.Input.Keyboard.KeyCodes.DOWN:
                     me.downLad = false;
                     break;
-                case Phaser.Input.Keyboard.KeyCodes.C:
+                case Phaser.Input.Keyboard.KeyCodes.R:
                     me.player.switched =true;
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.E:
@@ -481,6 +490,9 @@ class scene extends Phaser.Scene {
         /**CONDITIONS DE VIE OU DE MORT**/
         if (this.player.life <= 0){
             this.playerDeath();
+        }
+        if (this.monster.life <= 0){
+            this.monsterDeath();
         }
 
 
