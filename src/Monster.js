@@ -6,7 +6,7 @@ class Monster {
 
         this.life = 100;
 
-        this.monster = this.scene.physics.add.sprite(12800, 3700, 'aranea');
+        this.monster = this.scene.physics.add.sprite(18368, 1280, 'aranea');
         // this.monster.body.setSize(this.monster.width, this.monster.height+50).setOffset(0, 0);
         this.monster.body.setAllowGravity(false);
         this.monster.body.setCircle(64);
@@ -39,9 +39,10 @@ class Monster {
     scream(){
         //CRI DU MONSTRE
         //CONDITIONS POUR EVITER LA REPETITION DU SON EN CONTINU
+
         if (this.onScreen === true) {
+            this.scene.cameras.main.shake(2000, 0.005);
             this.onScreen = false;
-            console.log('SCREAMING');
         }
     }
 

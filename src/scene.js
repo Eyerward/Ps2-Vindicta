@@ -2,10 +2,10 @@ class scene extends Phaser.Scene {
     preload(){
         this.load.image('aranea', 'assets/images/aranea.png');
         this.load.image('wall', 'assets/images/wall.png');
-
-        this.load.image('diamond_blue', 'assets/images/diamond_blue.png');
-        this.load.image('diamond_red', 'assets/images/diamond_red.png');
-        this.load.image('enemy_blade', 'assets/images/enemy_blade.png');
+        this.load.image('wall2', 'assets/images/wall2.png');
+        this.load.image('broken', 'assets/images/broken.png');
+        this.load.image('brick', 'assets/images/brick.png');
+        this.load.image('rock', 'assets/images/rock.png');
         this.load.image('ladder', 'assets/images/ladder.png');
         this.load.image('brasero', 'assets/images/brasero.png');
         this.load.image('die_particle', 'assets/images/die_particle.png');
@@ -17,11 +17,11 @@ class scene extends Phaser.Scene {
         //Appel du spritesheet du joueur avec sa ref JSON
         this.load.atlas('player', 'assets/images/reagan_player.png','assets/images/reagan_player_atlas.json');
         //Appel de la map Tiled et de ses tuiles
-        this.load.image('tiles','assets/tileset/platform_vindicta_v4.png');
+        this.load.image('tiles','assets/tileset/platform_vindicta_v5.png');
         this.load.image('bg1','assets/tileset/bg1_mountain.png');
         this.load.image('bg2','assets/tileset/bg2_mountain.png');
         this.load.image('bg3','assets/tileset/bg3_sky.png');
-        this.load.tilemapTiledJSON('map_1','assets/maps/map_1.json');
+        this.load.tilemapTiledJSON('map_final','assets/maps/map_final.json');
     }
     create(){
 
@@ -46,12 +46,12 @@ class scene extends Phaser.Scene {
         /**PRESETS**/
         //APPEL DES LAYERS ET CREATION PLATFORMES ET PARALLAXE
 
-        const map = this.make.tilemap({ key: 'map_1' });
+        const map = this.make.tilemap({ key: 'map_final' });
 
         const sky = map.addTilesetImage('vindicta_sky','bg3');
         const bg2 = map.addTilesetImage('vindicta_bg2','bg2');
         const bg1 = map.addTilesetImage('vindicta_bg1','bg1');
-        const tileset = map.addTilesetImage('vindicta_platform', 'tiles');
+        const tileset = map.addTilesetImage('vindicta_platforms', 'tiles');
 
         this.sky = map.createLayer('BG3', sky, 0, -5000);
         this.bg2 = map.createLayer('BG2', bg2, 0, -4500);
@@ -134,17 +134,35 @@ class scene extends Phaser.Scene {
         });
 
         //MURS ENNEMIS
-        this.walls = this.physics.add.group({
+        this.wallsR = this.physics.add.group({
             allowGravity: false,
             immovable: true
         });
-        map.getObjectLayer('Wall').objects.forEach((wall) => {
-            const wallSprite = this.physics.add.sprite(wall.x, wall.y - 128 - wall.height, 'wall').setOrigin(0);
-            this.walls.add(wallSprite);
+        map.getObjectLayer('WallR').objects.forEach((wallR) => {
+            const wallRSprite = this.physics.add.sprite(wallR.x, wallR.y - 128 - wallR.height, 'wall').setOrigin(0);
+            this.wallsR.add(wallRSprite);
+        });
+        this.wallsB = this.physics.add.group({
+            allowGravity: false,
+            immovable: true
+        });
+        map.getObjectLayer('WallB').objects.forEach((wallB) => {
+            const wallBSprite = this.physics.add.sprite(wallB.x, wallB.y - 128 - wallB.height, 'wall2').setOrigin(0);
+            this.wallsB.add(wallBSprite);
+        });
+
+        //SAFETY
+        this.safe = this.physics.add.group({
+            allowGravity: false,
+            immovable: true
+        });
+        map.getObjectLayer('Safety').objects.forEach((safe) => {
+            const safeSprite = this.physics.add.sprite(safe.x+(safe.width*0.5),safe.y + (safe.height*0.5)).setSize(safe.width,safe.height);
+            this.safe.add(safeSprite);
         });
 
         /***ESSAI DE COLLECTIBLE**/
-        this.collect = new Collect(this,1100, 5500);
+        this.collect = new Collect(this,1408, 5500);
 
         /**************INITIALISATION PLAYER AVEC SA POSITION ET SA CAMERA***************/
         this.player = new Player(this);
@@ -153,7 +171,12 @@ class scene extends Phaser.Scene {
         this.saveY = this.player.player.y;
         this.monsterSpawnX = this.monster.monster.x;
         this.monsterSpawny = this.monster.monster.y;
-        this.cameras.main.startFollow(this.player.player,true,0.1,0.1,0,150);
+        this.cameras.main.startFollow(this.monster.monster, true, 0.1,0.1, 0, 0);
+        this.cameras.main.shake(3000, 0.005);
+        this.time.delayedCall(2000, () => {
+            this.cameras.main.startFollow(this.player.player,true,0.1,0.1,0,150);
+        });
+
 
         /**INITIALISATION ANTAGONISTE**/
 
@@ -221,7 +244,8 @@ class scene extends Phaser.Scene {
         //CHECKPOINT
         this.physics.add.overlap(this.player.player,this.save, this.checkpoint, null, this);
         //MURS VISQUEUX
-        this.physics.add.collider(this.player.player,this.walls, this.playerHurt, null, this);
+        this.physics.add.collider(this.player.player,this.wallsR);
+        this.physics.add.collider(this.player.player,this.wallsB);
         //ANTAGONISTE
         this.physics.add.collider(this.player.player, this.monster.monster, this.playerHurt, null, this);
         //COLLECTIBLES
@@ -229,9 +253,12 @@ class scene extends Phaser.Scene {
         this.physics.add.collider(this.collect.life, this.sol);
         this.physics.add.overlap(this.player.player, this.collect.power,this.powered, null, this);
         this.physics.add.overlap(this.player.player, this.collect.life,this.healed, null, this);
+        //SAFETY
+        this.physics.add.overlap(this.player.player, this.safe, this.safety, null, this);
 
         /**INPUT MOVEMENTS**/
         this.initKeyboard();
+        window.tableau = this;
 
     }
 
@@ -241,15 +268,17 @@ class scene extends Phaser.Scene {
 
     climb(){
         this.player.player.onLadder = true;
-        this.player.player.climbing = true;
+        this.player.climbing = true;
     }
     notClimb(){
-        this.player.player.climbing = false
+        this.player.climbing = false
     }
 
     checkpoint(player, save){
         this.saveX = this.player.player.x;
-        this.saveY = this.player.player.y;
+        this.saveY = this.player.player.y - 10;
+        this.player.life += 200;
+        this.player.power += 200;
         console.log("current", this.saveX, this.saveY);
         this.emitFire = this.add.particles('fire_particle'); //On charge les particules à appliquer au layer
         this.emitFire.createEmitter(this.fireFX); //On crée l'émetteur
@@ -273,8 +302,8 @@ class scene extends Phaser.Scene {
     }
 
     playerHurt(){
-        this.player.life -= this.valueHurt;
-        console.log(this.player.life, "life");
+        this.player.player.onLadder = false
+        this.player.life -= 10;
         this.player.player.setAlpha(0.3);
         let hurt = this.tweens.add({
             targets: this.player.player,
@@ -288,29 +317,40 @@ class scene extends Phaser.Scene {
     }
 
     playerDeath(){
+        this.player.player.onLadder = false;
+        this.player.player.climbing = false;
+        this.respawnFX.emitParticleAt(this.player.player.x, this.player.player.y+50);
         this.player.player.setVisible(false);
         this.player.player.disableBody();
-        this.player.player.climbing = false;
         this.time.addEvent({
-            delay: 500,
+            delay: 1000,
             callback: () => {
                 this.respawnFX.emitParticleAt(this.player.player.x, this.player.player.y+50);
                 this.player.player.enableBody();
                 this.player.player.setVisible(true);
+                this.player.player.body.setAllowGravity(true);
                 this.player.player.x = this.saveX;
                 this.player.player.y = this.saveY;
                 this.player.life = 500;
                 this.player.power = 0;
+                this.player.player.play('idle', true);
             }});
+    }
+
+    safety(){
+        this.player.player.x = this.saveX;
+        this.player.player.y = this.saveY;
+        this.player.player.play('idle', true);
     }
 
 
 
     monsterDeath(){
+        this.respawnFX.emitParticleAt(this.monster.monster.x, this.monster.monster.y);
         this.monster.monster.setVisible(false);
         this.monster.monster.disableBody();
         this.time.addEvent({
-            delay: 500,
+            delay: 2000,
             callback: () => {
                 this.respawnFX.emitParticleAt(this.monster.monster.x, this.monster.monster.y);
                 this.monster.monster.enableBody();
@@ -344,7 +384,11 @@ class scene extends Phaser.Scene {
                 case Phaser.Input.Keyboard.KeyCodes.Z:
                 case Phaser.Input.Keyboard.KeyCodes.UP:
                     me.upLad = true;
+                    console.log('JUMP 00');
+                    console.log('JUMP 00',me.player.player.body.onFloor());
+                    console.log('JUMP 00',me.player.player.body);
                     if (me.player.player.body.onFloor()) {
+                        console.log('JUMP 0');
                         me.player.jump();
                     }
                     break;
@@ -398,22 +442,7 @@ class scene extends Phaser.Scene {
 
         this.monster.monsterGestion(this.monster.monster, this.player.player);
 
-        /**QUELQUES CONDITIONS D'ANIMATION AVEC CONDITIONS DE PARALLAXE**/
-
-        //Parallaxe en X
-
-        if (this.player.player.body.velocity.x > 0){
-            /**this.time.addEvent({
-                delay: 50,
-                callback: () => {
-                    this.background.setVelocityX(500)
-                }
-            })**/
-        }
-        else if (this.player.player.body.velocity.x < 0){
-        }
-        else {
-        }
+        /**QUELQUES CONDITIONS D'ANIMATION**/
 
         //IDLE
         if (this.player.player.body.velocity.x === 0 && this.player.player.body.onFloor()) {
@@ -421,17 +450,17 @@ class scene extends Phaser.Scene {
         }
 
         //RUN
-        if (this.player.player.body.velocity.x != 0 && this.player.player.body.onFloor() && this.player.player.falling === true){
+        if (this.player.player.body.velocity.x != 0 && this.player.player.body.onFloor() && this.player.falling === true){
             this.player.player.play('run',true);
         }
         if(this.player.player.body.velocity.y ===0){
-            this.player.player.jumping = false;
-            this.player.player.falling = false;
+            this.player.jumping = false;
+            this.player.falling = false;
         }
 
         //SAUT ET GRIMPETTE
 
-        if(this.player.player.climbing === true){
+        if(this.player.climbing === true){
             console.log('climbing');
             if(this.player.player.body.velocity.y < 0){
                 this.player.player.play('climbUp',true);
@@ -445,12 +474,11 @@ class scene extends Phaser.Scene {
         }
         else {
             if (this.player.player.body.velocity.y < 0){
-                console.log('Jumping');
+                this.player.jumping = true;
                 this.player.player.play('jump', true);
             }
             else if (this.player.player.body.velocity.y > 0){
-                console.log('Falling');
-                this.player.player.falling =true;
+                this.player.falling =true;
                 this.player.player.play('fall', true);
 
             }
@@ -459,7 +487,7 @@ class scene extends Phaser.Scene {
 
 
         /**CONDITIONS POUR GRIMPER**/
-        if(this.player.player.onLadder)
+        if(this.player.player.onLadder === true)
         {
             this.player.player.onLadder = false;
             if (this.upLad)
@@ -478,7 +506,7 @@ class scene extends Phaser.Scene {
 
             }
 
-            if (!this.player.player.onLadder){
+            if (this.player.player.onLadder === false){
                 if (this.downLad || this.upLad || this.rightLad || this.leftLad){
                     this.player.player.body.setAllowGravity(true);
                 }

@@ -41,18 +41,34 @@ class Attack {
             });
         }
 
-        this.attackParticles = this.scene.add.particles('die_particle');
-        this.attackParticles.createEmitter({
-            frequency:100,
-            lifespan: 500,
-            quantity:50,
-            gavityY: 500,
+        this.rockParticles = this.scene.add.particles('rock');
+        this.rockParticles.createEmitter({
+            //frequency:100,
+            lifespan: 1000,
+            quantity:30,
+            gravityY: 1000,
             x:{min:-30,max:300},
             y:{min:-1000,max:1000},
-            rotate: {min:-10,max:10},
+            rotate: {min:-180,max:180},
             speedX: { min: -500, max: 500 },
-            speedY: { min: -100, max: 0 },
-            scale: {start: 2, end: 0},
+            speedY: { min: -500, max: 100 },
+            scale: {start: 1, end: 0},
+            alpha: { start: 1, end: 0 },
+            //blendMode: Phaser.BlendModes.ADD,
+            on: false
+        });
+        this.brickParticles = this.scene.add.particles('brick');
+        this.brickParticles.createEmitter({
+            //frequency:100,
+            lifespan: 1000,
+            quantity:30,
+            gravityY: 1000,
+            x:{min:-30,max:300},
+            y:{min:-1000,max:1000},
+            rotate: {min:-180,max:180},
+            speedX: { min: -500, max: 500 },
+            speedY: { min: -500, max: 100 },
+            scale: {start: 1, end: 0},
             alpha: { start: 1, end: 0 },
             //blendMode: Phaser.BlendModes.ADD,
             on: false
@@ -76,10 +92,15 @@ class Attack {
             attack.destroy();
         }, null, this);
 
-        this.scene.physics.add.collider(this.attack, this.scene.walls, function (attack,wall) {
-            this.attackParticles.emitParticleAt(wall.x + 32, wall.y + 128);
+        this.scene.physics.add.collider(this.attack, this.scene.wallsR, function (attack,wallR) {
+            this.rockParticles.emitParticleAt(wallR.x + 32, wallR.y + 200);
             attack.destroy();
-            wall.destroy();
+            wallR.destroy();
+        }, null, this);
+        this.scene.physics.add.collider(this.attack, this.scene.wallsB, function (attack,wallB) {
+            this.brickParticles.emitParticleAt(wallB.x + 32, wallB.y + 200);
+            attack.destroy();
+            wallB.destroy();
         }, null, this);
 
 
@@ -107,7 +128,6 @@ class Attack {
             repeat: 5,
         });
         this.scene.monster.hurtParticles.emitParticleAt(this.scene.monster.monster.x, this.scene.monster.monster.y);
-        console.log(this.scene.monster.life, 'Mlife');
     }
 
 }

@@ -123,30 +123,28 @@ class Player {
 
 
         /**INTERACTIONS MULTIPLES**/
-        this.player.climbing = false;
-        this.player.droite = true;
+        this.player.onLadder = false;
+        this.climbing = false;
         this.player.charge = true;
-        this.player.jumping = false;
-        this.player.falling = false;
+        this.jumping = false;
+        this.falling = false;
         this.scene.physics.add.collider(this.player, this.scene.sol);
     }
 
 
 
     jump(){
+        console.log('JUMP 1');
         this.jumpParticles.emitParticleAt(this.player.x+10, this.player.y+50);
-        this.player.jumping = true;
         this.player.setVelocityY(-1300);
     }
     moveRight(){
-        this.player.droite = true;
         this.player.setVelocityX(600);
         this.player.setFlipX(false);
         if (this.player.body.onFloor()) {
             this.player.play('run', true)}
     }
     moveLeft(){
-        this.player.droite = false;
         this.player.setVelocityX(-600);
         this.player.setFlipX(true);
         if (this.player.body.onFloor()) {
@@ -157,11 +155,11 @@ class Player {
     }
 
     attack(){
-        if(this.player.climbing === false) {
+        if(this.climbing === false) {
             if (this.player.charge === true) {
                 this.player.charge = false;
                 this.hit = new Attack(this.scene, this.player.x, this.player.y, this.player.flipX, this.player.body.velocity.x, this.reap);
-                this.scene.time.delayedCall(300, () => {
+                this.scene.time.delayedCall(200, () => {
                     this.player.charge = true
                 });
             }
