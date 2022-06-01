@@ -89,6 +89,28 @@ class Player {
             frameRate: 10,
         });
 
+        //ATTAQUES
+        this.scene.anims.create({
+            key: 'sword',
+            frames: this.scene.anims.generateFrameNames('player', {
+                prefix: 'reagan_sword_',
+                start: 1,
+                end: 8,
+            }),
+            framerate: 20,
+            repeat: 1
+        });
+        this.scene.anims.create({
+            key: 'blade',
+            frames: this.scene.anims.generateFrameNames('player', {
+                prefix: 'reagan_blade_',
+                start: 1,
+                end: 5,
+            }),
+            framerate: 20,
+            repeat: 1
+        });
+
 
         /**VFX MULTIPLES**/
         this.switchParticles = this.scene.add.particles('energy');
@@ -128,39 +150,48 @@ class Player {
         this.player.charge = true;
         this.jumping = false;
         this.falling = false;
+        this.attacking = false;
         this.scene.physics.add.collider(this.player, this.scene.sol);
     }
 
 
 
     jump(){
-        console.log('JUMP 1');
         this.jumpParticles.emitParticleAt(this.player.x+10, this.player.y+50);
         this.player.setVelocityY(-1300);
     }
     moveRight(){
         this.player.setVelocityX(600);
         this.player.setFlipX(false);
-        if (this.player.body.onFloor()) {
-            this.player.play('run', true)}
     }
     moveLeft(){
         this.player.setVelocityX(-600);
         this.player.setFlipX(true);
-        if (this.player.body.onFloor()) {
-            this.player.play('run', true)}
     }
     noMove(){
         this.player.setVelocityX(0);
     }
+    attackPlay(){
+        if (this.reap === true) {
+            this.player.play('sword', true);
+        }
+        else{
+            this.player.play('blade', true);
+        }
+    }
 
     attack(){
+        this.attacking = true;
         if(this.climbing === false) {
             if (this.player.charge === true) {
                 this.player.charge = false;
                 this.hit = new Attack(this.scene, this.player.x, this.player.y, this.player.flipX, this.player.body.velocity.x, this.reap);
                 this.scene.time.delayedCall(200, () => {
-                    this.player.charge = true
+                    this.player.charge = true;
+                    this.attacking = false;
+                });
+                this.scene.time.delayedCall(500, () => {
+                    this.attacking = false;
                 });
             }
         }

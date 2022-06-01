@@ -339,7 +339,7 @@ class scene extends Phaser.Scene {
 
     safety(){
         this.player.player.x = this.saveX;
-        this.player.player.y = this.saveY;
+        this.player.player.y = this.saveY-100;
         this.player.player.play('idle', true);
     }
 
@@ -384,11 +384,7 @@ class scene extends Phaser.Scene {
                 case Phaser.Input.Keyboard.KeyCodes.Z:
                 case Phaser.Input.Keyboard.KeyCodes.UP:
                     me.upLad = true;
-                    console.log('JUMP 00');
-                    console.log('JUMP 00',me.player.player.body.onFloor());
-                    console.log('JUMP 00',me.player.player.body);
                     if (me.player.player.body.onFloor()) {
-                        console.log('JUMP 0');
                         me.player.jump();
                     }
                     break;
@@ -446,12 +442,29 @@ class scene extends Phaser.Scene {
 
         //IDLE
         if (this.player.player.body.velocity.x === 0 && this.player.player.body.onFloor()) {
-            this.player.player.play('idle',true);
+            if (this.player.attacking === true) {
+                this.player.attackPlay();
+            }
+            else {
+                this.player.player.play('idle', true);
+            }
         }
 
         //RUN
         if (this.player.player.body.velocity.x != 0 && this.player.player.body.onFloor() && this.player.falling === true){
-            this.player.player.play('run',true);
+            if (this.player.attacking === true) {
+                this.player.attackPlay();
+            }
+            else {
+                this.player.player.play('run', true);
+            }
+        }
+        if (this.player.player.body.onFloor() && this.player.player.body.velocity.x != 0) {
+            if (this.player.attacking === true) {
+                this.player.attackPlay();
+            } else {
+                this.player.player.play('run', true);
+            }
         }
         if(this.player.player.body.velocity.y ===0){
             this.player.jumping = false;
@@ -475,11 +488,21 @@ class scene extends Phaser.Scene {
         else {
             if (this.player.player.body.velocity.y < 0){
                 this.player.jumping = true;
-                this.player.player.play('jump', true);
+                if (this.player.attacking === true) {
+                    this.player.attackPlay();
+                }
+                else {
+                    this.player.player.play('jump', true);
+                }
             }
             else if (this.player.player.body.velocity.y > 0){
                 this.player.falling =true;
-                this.player.player.play('fall', true);
+                if (this.player.attacking === true) {
+                    this.player.attackPlay();
+                }
+                else {
+                    this.player.player.play('fall', true);
+                }
 
             }
         }

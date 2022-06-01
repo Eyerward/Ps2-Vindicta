@@ -30,7 +30,7 @@ class Attack {
 
         if (this.reap === true){
             //this.attack.setVisible(false);
-            this.scene.time.delayedCall(200,()=>{
+            this.scene.time.delayedCall(300,()=>{
                 this.attack.destroy()
             });
         }
