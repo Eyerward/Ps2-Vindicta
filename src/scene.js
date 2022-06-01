@@ -8,6 +8,8 @@ class scene extends Phaser.Scene {
         this.load.image('rock', 'assets/images/rock.png');
         this.load.image('ladder', 'assets/images/ladder.png');
         this.load.image('brasero', 'assets/images/brasero.png');
+        this.load.image('boss', 'assets/images/boss.png');
+        this.load.image('bossFire', 'assets/images/boss_fire.png');
         this.load.image('die_particle', 'assets/images/die_particle.png');
         this.load.image('fire_particle', 'assets/images/fire_particle.png');
         //Appel des différents Spritesheets : collectibles, pouvoirs et ennemis
@@ -161,6 +163,27 @@ class scene extends Phaser.Scene {
             this.safe.add(safeSprite);
         });
 
+        //DIVE
+        this.dive = this.physics.add.group({
+            allowGravity: false,
+            immovable: true
+        });
+        map.getObjectLayer('Dive').objects.forEach((dive) => {
+            const diveSprite = this.physics.add.sprite(dive.x - dive.width, dive.y - dive.height, 'broken').setOrigin(0);
+            this.dive.add(diveSprite);
+        });
+
+        //BOSS FIGHT
+        this.boss = this.physics.add.group({
+            allowGravity: false,
+            immovable: true
+        });
+        map.getObjectLayer('BossFight').objects.forEach((boss) => {
+            const bossSprite = this.physics.add.sprite(boss.x - boss.width, boss.y - boss.height, 'boss').setOrigin(0);
+            this.boss.add(bossSprite);
+        });
+
+
         /***ESSAI DE COLLECTIBLE**/
         this.collect = new Collect(this,1408, 5500);
 
@@ -171,14 +194,12 @@ class scene extends Phaser.Scene {
         this.saveY = this.player.player.y;
         this.monsterSpawnX = this.monster.monster.x;
         this.monsterSpawny = this.monster.monster.y;
+        /**UN PEU DE MISE EN SCENE**/
         this.cameras.main.startFollow(this.monster.monster, true, 0.1,0.1, 0, 0);
         this.cameras.main.shake(3000, 0.005);
         this.time.delayedCall(2000, () => {
             this.cameras.main.startFollow(this.player.player,true,0.1,0.1,0,150);
         });
-
-
-        /**INITIALISATION ANTAGONISTE**/
 
 
         /*****VFX EN VRAC*****/
@@ -193,6 +214,18 @@ class scene extends Phaser.Scene {
             scale: {start: 1, end: 0},
             alpha: { start: 1, end: 0 },
             blendMode: 'ADD',
+        });
+        this.dieParticles = this.add.particles('die_particle');
+        this.dieParticles.createEmitter({
+            speed: 300,
+            lifespan: 600,
+            quantity: 100,
+            rotate: {min:-90,max:90},
+            scale: {start: 2, end: 0},
+            alpha:{start: 1, end: 0},
+            //angle: { min: -180, max: 0 },
+            blendMode: 'ADD',
+            on: false
         });
 
         this.fireParticles = this.add.particles('fire_particle');
@@ -214,13 +247,44 @@ class scene extends Phaser.Scene {
             quantity:10,
             x:{min:-20,max:20},
             y:{min:-10,max:0},
-            rotate: {min:-10,max:10},
+            rotate: {min:-180,max:180},
             speedX: { min: -20, max: 20 },
             speedY: { min: -100, max: -10 },
             scale: {start: 0, end: 1},
             alpha: { start: 1, end: 0 },
             blendMode: Phaser.BlendModes.ADD,
         };
+
+        this.bossFX = {
+            frequency:100,
+            lifespan: 800,
+            quantity:50,
+            x:{min:-50,max:50},
+            y:{min:-10,max:0},
+            rotate: {min:-180, max:180},
+            speedX: { min: -20, max: 20 },
+            speedY: { min: -500, max: -10 },
+            scale: {start: 0, end: 1},
+            alpha: { start: 1, end: 0 },
+            blendMode: Phaser.BlendModes.ADD,
+        };
+
+        this.bricks = this.add.particles('brick');
+        this.bricks.createEmitter({
+            //frequency:100,
+            lifespan: 1000,
+            quantity:30,
+            gravityY: 1000,
+            x:{min:-30,max:300},
+            y:{min:-1000,max:1000},
+            rotate: {min:-180,max:180},
+            speedX: { min: -500, max: 500 },
+            speedY: { min: -100, max: 500 },
+            scale: {start: 1, end: 0},
+            alpha: { start: 1, end: 0 },
+            //blendMode: Phaser.BlendModes.ADD,
+            on: false
+        });
 
         /**PARALLAXE**/
         this.sky.scrollFactorX = 0;
@@ -243,9 +307,11 @@ class scene extends Phaser.Scene {
         this.physics.add.overlap(this.player.player,this.outLad, this.notClimb.bind(this), null, this);
         //CHECKPOINT
         this.physics.add.overlap(this.player.player,this.save, this.checkpoint, null, this);
-        //MURS VISQUEUX
+        this.physics.add.overlap(this.player.player,this.boss, this.finalBoss, null, this);
+        //MURS
         this.physics.add.collider(this.player.player,this.wallsR);
         this.physics.add.collider(this.player.player,this.wallsB);
+        this.physics.add.overlap(this.player.player,this.dive, this.diving, null, this);
         //ANTAGONISTE
         this.physics.add.collider(this.player.player, this.monster.monster, this.playerHurt, null, this);
         //COLLECTIBLES
@@ -300,9 +366,14 @@ class scene extends Phaser.Scene {
         this.collect.lifeParticles.emitParticleAt(this.collect.life.body.x, this.collect.life.body.y);
         this.collect.life.destroy();
     }
+    diving(player, dive){
+        this.bricks.emitParticleAt(dive.x + 64, dive.y+10);
+        dive.destroy();
+    }
 
     playerHurt(){
         this.player.player.onLadder = false;
+        this.player.climbing = false;
         this.player.player.body.setAllowGravity(true);
         this.player.life -= 10;
         this.player.player.setAlpha(0.3);
@@ -344,16 +415,25 @@ class scene extends Phaser.Scene {
         this.player.player.play('idle', true);
     }
 
+    finalBoss(player, boss){
+        this.monster.finalFight = true;
+        this.emitBoss = this.add.particles('bossFire'); //On charge les particules à appliquer au layer
+        this.emitBoss.createEmitter(this.bossFX);
+        this.emitBoss.x = boss.x +60;
+        this.emitBoss.y = boss.y+15;
+        boss.body.enable = false;
+
+    }
 
 
     monsterDeath(){
-        this.respawnFX.emitParticleAt(this.monster.monster.x, this.monster.monster.y);
+        this.dieParticles.emitParticleAt(this.monster.monster.x, this.monster.monster.y);
         this.monster.monster.setVisible(false);
         this.monster.monster.disableBody();
         this.time.addEvent({
             delay: 2000,
             callback: () => {
-                this.respawnFX.emitParticleAt(this.monster.monster.x, this.monster.monster.y);
+                this.dieParticles.emitParticleAt(this.monster.monster.x, this.monster.monster.y);
                 this.monster.monster.enableBody();
                 this.monster.monster.setVisible(true);
                 this.monster.monster.x = this.monsterSpawnX;
@@ -401,6 +481,10 @@ class scene extends Phaser.Scene {
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.E:
                     me.player.special();
+                    break;
+                case Phaser.Input.Keyboard.KeyCodes.SHIFT:
+                    me.player.player.x = 18400;
+                    me.player.player.y = 1000;
                     break;
             }
         });

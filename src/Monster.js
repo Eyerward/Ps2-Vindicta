@@ -3,6 +3,7 @@ class Monster {
         this.scene = scene;
         this.player = player;
         this.onScreen = false;
+        this.finalFight = false;
 
         this.life = 100;
 
@@ -17,6 +18,7 @@ class Monster {
             lifespan: 700,
             quantity: 10,
             gravityY: 500,
+            rotate: {min:-90,max:90},
             scale: {start: 1, end: 0},
             //angle: { min: -180, max: 0 },
             blendMode: 'ADD',
