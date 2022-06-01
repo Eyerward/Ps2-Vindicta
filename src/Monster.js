@@ -66,8 +66,7 @@ class Monster {
             monster.setFlipX(false);
         }
     }
-    idle(monster){
-        monster.setVelocityX(0);
-        monster.setVelocityY(0);
+    beginning(monster, player){
+        this.scene.physics.moveToObject(monster, player, 150);
     }
 }

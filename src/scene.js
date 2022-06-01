@@ -198,7 +198,7 @@ class scene extends Phaser.Scene {
 
 
         /***ESSAI DE COLLECTIBLE**/
-        this.collect = new Collect(this,1380, 5500);
+        this.collect = new Collect(this,1300, 5500);
 
         /**************INITIALISATION PLAYER AVEC SA POSITION ET SA CAMERA***************/
         this.player = new Player(this);
@@ -236,7 +236,7 @@ class scene extends Phaser.Scene {
         this.dieParticles.createEmitter({
             speed: 300,
             lifespan: 600,
-            quantity: 100,
+            quantity: 50,
             rotate: {min:-90,max:90},
             scale: {start: 2, end: 0},
             alpha:{start: 1, end: 0},
@@ -575,7 +575,7 @@ class scene extends Phaser.Scene {
             this.monster.monsterGestion(this.monster.monster, this.player.player);
         }
         else {
-            this.monster.idle(this.monster.monster);
+            this.monster.beginning(this.monster.monster, this.player.player);
         }
 
 

@@ -4,12 +4,12 @@ class Collect {
 
         this.valueCollect = 200;
 
-        this.power = this.scene.physics.add.sprite(x-60, y, 'power_collect');
+        this.power = this.scene.physics.add.sprite(x+60, y, 'power_collect');
         //Taille de la hitbox du collectible
         this.power.body.setSize(this.power.width-40, this.power.height).setOffset(20, 20);
         this.power.body.setBounce(0.5);
 
-        this.life = this.scene.physics.add.sprite(x+60, y, 'life_collect');
+        this.life = this.scene.physics.add.sprite(x-60, y, 'life_collect');
         //Taille de la hitbox du collectible
         this.life.body.setSize(this.life.width-40, this.life.height).setOffset(20, 20);
         this.life.body.setBounce(0.5);

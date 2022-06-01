@@ -16,7 +16,7 @@ class Player {
 
         //Taille de la hitbox du Player
         this.player.body.setSize(this.player.width-70, this.player.height-10).setOffset(35, 10);
-        this.player.body.setBounce(0.5,0);
+        this.player.body.setBounce(0.2,0);
 
         /***Animations***/
         //RUN
@@ -115,13 +115,13 @@ class Player {
         /**VFX MULTIPLES**/
         this.switchParticles = this.scene.add.particles('energy');
         this.switchParticles.createEmitter({
-            speed: 200,
+            speed: 300,
             lifespan: 500,
-            quantity: 100,
-            alpha: 1,
-            //gravityY: 1000,
-            scale: {start: 2, end: 0},
-            //angle: { min: 100, max: 80 },
+            quantity: 5,
+            alpha: {start: 1, end: 0},
+            gravityY: 1000,
+            scale: {start: 1, end: 0},
+            angle: { min: -180, max: 0 },
             //follow: this.player,
             blendMode: 'ADD',
             on: false
@@ -204,25 +204,11 @@ class Player {
         }
     }
 
-    special(){
-        if(this.lightning === true) {
-            console.log('ATTAQUE SPECIAAAAAAAALE !!!!!');
-            this.lightning = false;
-            if (this.power >= 500) {
-                this.scene.time.addEvent({
-                    delay: 300,
-                    callback: () => {
-                        this.power = 0;
-                        new Special(this.scene, this.player.x, this.player.y);
-                    }});
-            }
-        }
-    }
 
     charaSwitch(){
         if(this.switched === true) {
             this.switched = false;
-            this.switchParticles.emitParticleAt(this.player.body.x + 29, this.player.body.y + 64);
+            this.switchParticles.emitParticleAt(this.player.body.x + 29, this.player.body.y + 55);
             if (this.reap === true) {
                 console.log('BLADE');
                 this.reap = false;
