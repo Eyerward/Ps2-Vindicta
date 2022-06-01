@@ -30,7 +30,7 @@ class Attack {
 
         if (this.reap === true){
             //this.attack.setVisible(false);
-            this.scene.time.delayedCall(300,()=>{
+            this.scene.time.delayedCall(250,()=>{
                 this.attack.destroy()
             });
         }
@@ -115,7 +115,7 @@ class Attack {
             this.scene.monster.life -= 10;
         }
         else if (this.reap === false){
-            this.scene.monster.life -= 5;
+            this.scene.monster.life -= 6;
         }
 
         this.scene.monster.monster.setAlpha(0.3);

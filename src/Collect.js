@@ -2,7 +2,7 @@ class Collect {
     constructor(scene, x, y) {
         this.scene = scene;
 
-        this.valueCollect = 20;
+        this.valueCollect = 200;
 
         this.power = this.scene.physics.add.sprite(x-60, y, 'power_collect');
         //Taille de la hitbox du collectible

@@ -4,13 +4,16 @@ class Monster {
         this.player = player;
         this.onScreen = false;
         this.finalFight = false;
+        this.dying = true;
+        this.respawning = true;
 
-        this.life = 100;
+        this.life = 70;
 
         this.monster = this.scene.physics.add.sprite(18368, 1280, 'aranea');
         // this.monster.body.setSize(this.monster.width, this.monster.height+50).setOffset(0, 0);
         this.monster.body.setAllowGravity(false);
         this.monster.body.setCircle(64);
+        this.monster.setFlipX(true);
 
         this.hurtParticles = this.scene.add.particles('die_particle');
         this.hurtParticles.createEmitter({
@@ -29,13 +32,13 @@ class Monster {
 
     monsterGestion(monster, player){
         this.dist = Phaser.Math.Distance.BetweenPoints(player, monster);
+        this.trackPlayer(monster, player);
         if(this.dist < 750){
             this.scream();
         }
         else{
             this.onScreen = true;
         }
-        this.trackPlayer(monster, player);
     }
 
     scream(){
@@ -43,13 +46,19 @@ class Monster {
         //CONDITIONS POUR EVITER LA REPETITION DU SON EN CONTINU
 
         if (this.onScreen === true) {
-            this.scene.cameras.main.shake(2000, 0.005);
             this.onScreen = false;
+            this.scene.cameras.main.shake(2000, 0.005);
         }
     }
 
     trackPlayer(monster, player){
-        this.scene.physics.moveToObject(monster, player, 150);
+        if(this.dist < 750) {
+            this.scene.physics.moveToObject(monster, player, 150);
+        }
+        else{
+            this.scene.physics.moveToObject(monster, player, 400);
+
+        }
         if (player.x < monster.x){
             monster.setFlipX(true);
         }

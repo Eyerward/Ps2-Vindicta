@@ -5,7 +5,7 @@ class Player {
         this.scene = scene;
 
         this.life = 1000;
-        this.power = 1000;
+        this.power = 0;
         this.reap = true;
         this.switched = true;
         this.lightning = true;
@@ -15,7 +15,7 @@ class Player {
         //this.player = this.scene.physics.add.sprite(0, 0, 'player');
 
         //Taille de la hitbox du Player
-        this.player.body.setSize(this.player.width-70, this.player.height).setOffset(35, 0);
+        this.player.body.setSize(this.player.width-70, this.player.height-10).setOffset(35, 10);
         this.player.body.setBounce(0.5,0);
 
         /***Animations***/
@@ -94,7 +94,7 @@ class Player {
             key: 'sword',
             frames: this.scene.anims.generateFrameNames('player', {
                 prefix: 'reagan_sword_',
-                start: 1,
+                start: 0,
                 end: 8,
             }),
             framerate: 20,
@@ -104,7 +104,7 @@ class Player {
             key: 'blade',
             frames: this.scene.anims.generateFrameNames('player', {
                 prefix: 'reagan_blade_',
-                start: 1,
+                start: 0,
                 end: 5,
             }),
             framerate: 20,
@@ -146,6 +146,9 @@ class Player {
 
         /**INTERACTIONS MULTIPLES**/
         this.player.onLadder = false;
+        this.healing = false;
+        this.dying = true;
+        this.respawning = true;
         this.climbing = false;
         this.player.charge = true;
         this.jumping = false;
@@ -181,18 +184,22 @@ class Player {
     }
 
     attack(){
-        this.attacking = true;
-        if(this.climbing === false) {
-            if (this.player.charge === true) {
-                this.player.charge = false;
-                this.hit = new Attack(this.scene, this.player.x, this.player.y, this.player.flipX, this.player.body.velocity.x, this.reap);
-                this.scene.time.delayedCall(200, () => {
-                    this.player.charge = true;
-                    this.attacking = false;
-                });
-                this.scene.time.delayedCall(500, () => {
-                    this.attacking = false;
-                });
+        if (this.power > 0) {
+            this.power -= 20;
+            this.attacking = true;
+            if (this.climbing === false) {
+                if (this.player.charge === true) {
+                    this.player.charge = false;
+                    this.scene.time.delayedCall(100, () => {
+                        this.hit = new Attack(this.scene, this.player.x, this.player.y, this.player.flipX, this.player.body.velocity.x, this.reap);
+                    });
+                    this.scene.time.delayedCall(200, () => {
+                        this.player.charge = true;
+                    });
+                    this.scene.time.delayedCall(400, () => {
+                        this.attacking = false;
+                    });
+                }
             }
         }
     }

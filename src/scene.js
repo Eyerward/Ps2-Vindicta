@@ -26,6 +26,9 @@ class scene extends Phaser.Scene {
         this.load.tilemapTiledJSON('map_final','assets/maps/map_final.json');
     }
     create(){
+        /**PRESETS DE MISE EN SCENE**/
+        this.beginning = true;
+        this.deathSound = false;
 
 
         //VFX PARTICLES D2J0 PRESENTES SUR LA MAP
@@ -59,10 +62,10 @@ class scene extends Phaser.Scene {
         this.bg2 = map.createLayer('BG2', bg2, 0, -4500);
         this.bg1 = map.createLayer('BG1', bg1, 0, -4300);
 
-        const grotte = map.createStaticLayer('Grotte', tileset, 0, 0);
-        const platforms = map.createStaticLayer('Platforms', tileset, 0, 0);
-        const staticObjects = map.createStaticLayer('StaticObjects', tileset, 0, 0);
-        const cache = map.createStaticLayer('Cache', tileset, 0, 0);
+        const grotte = map.createLayer('Grotte', tileset, 0, 0);
+        const platforms = map.createLayer('Platforms', tileset, 0, 0);
+        const staticObjects = map.createLayer('StaticObjects', tileset, 0, 0);
+        const cache = map.createLayer('Cache', tileset, 0, 0);
         this.mapCache = cache;
         this.mapCache.visible = true;
 
@@ -99,16 +102,6 @@ class scene extends Phaser.Scene {
             const ladderSprite = this.physics.add.sprite(ladder.x+(ladder.width*0.5),ladder.y+(ladder.height*0.5)).setSize(ladder.width,ladder.height);
             this.ladder.add(ladderSprite);
         });
-
-        /**this.ladder = this.physics.add.group({
-            allowGravity: false,
-            immovable: true
-        });
-        map.getObjectLayer('Ladder').objects.forEach((ladder) => {
-            // Add new spikes to our sprite group
-            const ladderSprite = this.ladder.create(ladder.x,ladder.y - ladder.height, 'ladder').setOrigin(0);
-            ladderSprite.body.setSize(ladder.width-50, ladder.height).setOffset(25, 0);
-        });**/
 
         //SORTIE DE L'ECHELLE
         this.outLad = this.physics.add.group({
@@ -173,6 +166,16 @@ class scene extends Phaser.Scene {
             this.dive.add(diveSprite);
         });
 
+        //REGENERATION
+        this.regenerate = this.physics.add.group({
+            allowGravity: false,
+            immovable: true
+        });
+        map.getObjectLayer('Regenerate').objects.forEach((regenerate) => {
+            const regenerateSprite = this.physics.add.sprite(regenerate.x+(regenerate.width*0.5),regenerate.y + (regenerate.height*0.5)).setSize(regenerate.width,regenerate.height);
+            this.regenerate.add(regenerateSprite);
+        });
+
         //BOSS FIGHT
         this.boss = this.physics.add.group({
             allowGravity: false,
@@ -183,12 +186,25 @@ class scene extends Phaser.Scene {
             this.boss.add(bossSprite);
         });
 
+        //EASTER
+        this.easter = this.physics.add.group({
+            allowGravity: false,
+            immovable: true
+        });
+        map.getObjectLayer('EasterFound').objects.forEach((easter) => {
+            const easterSprite = this.physics.add.sprite(easter.x+(easter.width*0.5),easter.y + (easter.height*0.5)).setSize(easter.width,easter.height);
+            this.easter.add(easterSprite);
+        });
+
 
         /***ESSAI DE COLLECTIBLE**/
-        this.collect = new Collect(this,1408, 5500);
+        this.collect = new Collect(this,1380, 5500);
 
         /**************INITIALISATION PLAYER AVEC SA POSITION ET SA CAMERA***************/
         this.player = new Player(this);
+        this.easterEgg = map.createLayer('Easter', tileset, 0, 0);
+        this.easterEgg.visible = true;
+
         this.monster = new Monster(this, this.player.player);
         this.saveX = this.player.player.x;
         this.saveY = this.player.player.y;
@@ -198,6 +214,7 @@ class scene extends Phaser.Scene {
         this.cameras.main.startFollow(this.monster.monster, true, 0.1,0.1, 0, 0);
         this.cameras.main.shake(3000, 0.005);
         this.time.delayedCall(2000, () => {
+            this.beginning = false;
             this.cameras.main.startFollow(this.player.player,true,0.1,0.1,0,150);
         });
 
@@ -302,11 +319,13 @@ class scene extends Phaser.Scene {
         /*****OVERLAPS ENTRE OBJECTS*****/
         //CACHE
         this.physics.add.overlap(this.player.player,this.cache, this.discover, null, this);
+        this.physics.add.overlap(this.player.player,this.easter, this.bravo, null, this);
         //INTERACTIONS LADDER
         this.physics.add.overlap(this.player.player,this.ladder, this.climb.bind(this), null, this);
         this.physics.add.overlap(this.player.player,this.outLad, this.notClimb.bind(this), null, this);
         //CHECKPOINT
         this.physics.add.overlap(this.player.player,this.save, this.checkpoint, null, this);
+        this.physics.add.overlap(this.player.player,this.regenerate, this.regeneration, null, this);
         this.physics.add.overlap(this.player.player,this.boss, this.finalBoss, null, this);
         //MURS
         this.physics.add.collider(this.player.player,this.wallsR);
@@ -328,6 +347,10 @@ class scene extends Phaser.Scene {
 
     }
 
+    bravo(){
+        this.easterEgg.visible = false;
+    }
+
     discover(){
         this.mapCache.visible = false;
     }
@@ -338,6 +361,9 @@ class scene extends Phaser.Scene {
     }
     notClimb(){
         this.player.climbing = false
+    }
+    regeneration(){
+        this.player.healing = true;
     }
 
     checkpoint(player, save){
@@ -356,13 +382,10 @@ class scene extends Phaser.Scene {
 
     powered(){
         this.player.power += this.collect.valueCollect;
-        console.log(this.player.power, "power");
         this.collect.powerParticles.emitParticleAt(this.collect.power.body.x, this.collect.power.body.y);
         this.collect.power.destroy();
     }
     healed(){
-        this.player.life += this.collect.valueCollect;
-        console.log(this.player.power, "life");
         this.collect.lifeParticles.emitParticleAt(this.collect.life.body.x, this.collect.life.body.y);
         this.collect.life.destroy();
     }
@@ -389,14 +412,29 @@ class scene extends Phaser.Scene {
     }
 
     playerDeath(){
+        this.player.respawning = true;
+        if (this.monster.finalFight === true) {
+            this.monster.life = 200;
+        }
+        if (this.deathSound === true && this.player.dying === true) {
+            this.deathSound = false;
+            this.player.dying = false;
+            console.log('MORT');
+        }
         this.player.player.onLadder = false;
-        this.player.player.climbing = false;
+        this.player.climbing = false;
         this.respawnFX.emitParticleAt(this.player.player.x, this.player.player.y+50);
         this.player.player.setVisible(false);
         this.player.player.disableBody();
         this.time.addEvent({
             delay: 1000,
             callback: () => {
+                this.player.life = 1000;
+                if (this.player.respawning === true){
+                    this.player.respawning = false;
+                    console.log('RESPAWN');
+                }
+                this.player.dying = true;
                 this.respawnFX.emitParticleAt(this.player.player.x, this.player.player.y+50);
                 this.player.player.enableBody();
                 this.player.player.setVisible(true);
@@ -417,6 +455,7 @@ class scene extends Phaser.Scene {
 
     finalBoss(player, boss){
         this.monster.finalFight = true;
+        this.monster.life = 200;
         this.emitBoss = this.add.particles('bossFire'); //On charge les particules à appliquer au layer
         this.emitBoss.createEmitter(this.bossFX);
         this.emitBoss.x = boss.x +60;
@@ -427,19 +466,30 @@ class scene extends Phaser.Scene {
 
 
     monsterDeath(){
-        this.dieParticles.emitParticleAt(this.monster.monster.x, this.monster.monster.y);
-        this.monster.monster.setVisible(false);
-        this.monster.monster.disableBody();
-        this.time.addEvent({
-            delay: 2000,
-            callback: () => {
-                this.dieParticles.emitParticleAt(this.monster.monster.x, this.monster.monster.y);
-                this.monster.monster.enableBody();
-                this.monster.monster.setVisible(true);
-                this.monster.monster.x = this.monsterSpawnX;
-                this.monster.monster.y = this.monsterSpawny;
-                this.monster.life = 100;
-            }});
+        if (this.monster.finalFight === true){
+            this.cameras.main.startFollow(this.monster.monster, true);
+            this.dieParticles.emitParticleAt(this.monster.monster.x, this.monster.monster.y);
+            this.monster.monster.setVisible(false);
+            this.monster.monster.disableBody();
+            this.cameras.main.shake(1000, 0.05);
+            this.cameras.main.fade(5000, 1000, 1000, 1000);
+        }
+        else {
+            this.dieParticles.emitParticleAt(this.monster.monster.x, this.monster.monster.y);
+            this.monster.monster.setVisible(false);
+            this.monster.monster.disableBody();
+            this.time.addEvent({
+                delay: 2000,
+                callback: () => {
+                    this.dieParticles.emitParticleAt(this.monster.monster.x, this.monster.monster.y);
+                    this.monster.monster.enableBody();
+                    this.monster.monster.setVisible(true);
+                    this.monster.monster.x = this.monsterSpawnX;
+                    this.monster.monster.y = this.monsterSpawny;
+                    this.monster.life = 50;
+                }
+            });
+        }
     }
 
 
@@ -475,6 +525,7 @@ class scene extends Phaser.Scene {
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.SPACE:
                     me.player.attack();
+                    console.log('power :', me.player.power);
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.R:
                     me.player.charaSwitch();
@@ -520,8 +571,20 @@ class scene extends Phaser.Scene {
         });
     }
     update(){
+        if (this.beginning === false) {
+            this.monster.monsterGestion(this.monster.monster, this.player.player);
+        }
+        else {
+            this.monster.idle(this.monster.monster);
+        }
 
-        this.monster.monsterGestion(this.monster.monster, this.player.player);
+
+        if (this.player.life > 1000){
+            this.player.life = 1000;
+        }
+        if (this.player.power > 1000){
+            this.player.power = 1000;
+        }
 
         /**QUELQUES CONDITIONS D'ANIMATION**/
 
@@ -623,8 +686,16 @@ class scene extends Phaser.Scene {
 
         }
 
+        /***CONDITION DE REGENERATION***/
+        if(this.player.healing === true){
+            this.player.healing = false;
+            this.player.life += 2;
+            this.player.power += 2;
+        }
+
         /**CONDITIONS DE VIE OU DE MORT**/
         if (this.player.life <= 0){
+            this.deathSound = true;
             this.playerDeath();
         }
         if (this.monster.life <= 0){
