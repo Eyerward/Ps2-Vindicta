@@ -302,7 +302,8 @@ class scene extends Phaser.Scene {
     }
 
     playerHurt(){
-        this.player.player.onLadder = false
+        this.player.player.onLadder = false;
+        this.player.player.body.setAllowGravity(true);
         this.player.life -= 10;
         this.player.player.setAlpha(0.3);
         let hurt = this.tweens.add({
@@ -331,7 +332,7 @@ class scene extends Phaser.Scene {
                 this.player.player.body.setAllowGravity(true);
                 this.player.player.x = this.saveX;
                 this.player.player.y = this.saveY;
-                this.player.life = 500;
+                this.player.life = 1000;
                 this.player.power = 0;
                 this.player.player.play('idle', true);
             }});

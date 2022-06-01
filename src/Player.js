@@ -4,8 +4,8 @@ class Player {
 
         this.scene = scene;
 
-        this.life = 500;
-        this.power = 500;
+        this.life = 1000;
+        this.power = 1000;
         this.reap = true;
         this.switched = true;
         this.lightning = true;

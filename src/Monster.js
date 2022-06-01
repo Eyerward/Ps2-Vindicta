@@ -47,7 +47,7 @@ class Monster {
     }
 
     trackPlayer(monster, player){
-        this.scene.physics.moveToObject(monster, player, 200);
+        this.scene.physics.moveToObject(monster, player, 150);
         if (player.x < monster.x){
             monster.setFlipX(true);
         }
