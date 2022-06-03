@@ -3,11 +3,9 @@ class Monster {
         this.scene = scene;
         this.player = player;
         this.onScreen = false;
-        this.finalFight = false;
         this.dying = true;
         this.respawning = true;
 
-        this.life = 70;
 
         this.monster = this.scene.physics.add.sprite(18368, 1280, 'aranea');
         // this.monster.body.setSize(this.monster.width, this.monster.height+50).setOffset(0, 0);

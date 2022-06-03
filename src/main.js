@@ -11,6 +11,15 @@ let gameConfig = {
             //debug: true,
         },
     },
-    scene: new scene()
+    scene: [new scene(), new HUD()]
 };
 let game = new Phaser.Game(gameConfig);
+window.Vie = 2000;
+window.Pouvoir = 0;
+window.MonstreVie = 50;
+Window.Climax = false;
+window.HUDvisible = false;
+window.Armevisible = false;
+window.Monstrevisible = false;
+window.Sword = true;
+

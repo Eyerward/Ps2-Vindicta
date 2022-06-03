@@ -1,4 +1,7 @@
 class scene extends Phaser.Scene {
+    constructor(){
+        super('scene')
+    }
     preload(){
         this.load.image('aranea', 'assets/images/aranea.png');
         this.load.image('wall', 'assets/images/wall.png');
@@ -24,12 +27,20 @@ class scene extends Phaser.Scene {
         this.load.image('bg2','assets/tileset/bg2_mountain.png');
         this.load.image('bg3','assets/tileset/bg3_sky.png');
         this.load.tilemapTiledJSON('map_final','assets/maps/map_final.json');
+
+        this.load.audio('kill', 'assets/sfx/kill.wav');
     }
     create(){
         /**PRESETS DE MISE EN SCENE**/
         this.beginning = true;
         this.deathSound = false;
+        this.win = true;
 
+        this.sound = this.sound.add('kill',{
+            volume:0.5,
+            loop:true,
+        })
+        this.sound.play()
 
         //VFX PARTICLES D2J0 PRESENTES SUR LA MAP
 
@@ -314,6 +325,9 @@ class scene extends Phaser.Scene {
         this.bg1.scrollFactorY = 0.15;
 
 
+        /**LANCEMENT DE L'INTERFACE**/
+
+        this.scene.launch('HUD');
 
 
         /*****OVERLAPS ENTRE OBJECTS*****/
@@ -358,9 +372,11 @@ class scene extends Phaser.Scene {
     climb(){
         this.player.player.onLadder = true;
         this.player.climbing = true;
+        this.attacking = false;
     }
     notClimb(){
         this.player.climbing = false
+        this.attacking = false;
     }
     regeneration(){
         this.player.healing = true;
@@ -369,8 +385,8 @@ class scene extends Phaser.Scene {
     checkpoint(player, save){
         this.saveX = this.player.player.x;
         this.saveY = this.player.player.y - 10;
-        this.player.life += 200;
-        this.player.power += 200;
+        window.Vie += 200;
+        window.Pouvoir += 200;
         console.log("current", this.saveX, this.saveY);
         this.emitFire = this.add.particles('fire_particle'); //On charge les particules à appliquer au layer
         this.emitFire.createEmitter(this.fireFX); //On crée l'émetteur
@@ -381,11 +397,14 @@ class scene extends Phaser.Scene {
     }
 
     powered(){
-        this.player.power += this.collect.valueCollect;
+        window.HUDvisible = true;
+        window.Armevisible = true;
+        window.Pouvoir += this.collect.valueCollect;
         this.collect.powerParticles.emitParticleAt(this.collect.power.body.x, this.collect.power.body.y);
         this.collect.power.destroy();
     }
     healed(){
+        window.HUDvisible = true;
         this.collect.lifeParticles.emitParticleAt(this.collect.life.body.x, this.collect.life.body.y);
         this.collect.life.destroy();
     }
@@ -397,8 +416,9 @@ class scene extends Phaser.Scene {
     playerHurt(){
         this.player.player.onLadder = false;
         this.player.climbing = false;
+        this.attacking = false;
         this.player.player.body.setAllowGravity(true);
-        this.player.life -= 10;
+        window.Vie -= 10;
         this.player.player.setAlpha(0.3);
         let hurt = this.tweens.add({
             targets: this.player.player,
@@ -412,9 +432,11 @@ class scene extends Phaser.Scene {
     }
 
     playerDeath(){
+        window.Vie = 0;
+        this.attacking = false;
         this.player.respawning = true;
-        if (this.monster.finalFight === true) {
-            this.monster.life = 200;
+        if (window.Climax === true) {
+            window.MonstreVie += 2;
         }
         if (this.deathSound === true && this.player.dying === true) {
             this.deathSound = false;
@@ -429,7 +451,8 @@ class scene extends Phaser.Scene {
         this.time.addEvent({
             delay: 1000,
             callback: () => {
-                this.player.life = 1000;
+                window.Vie = 2000;
+                window.Pouvoir = 1000;
                 if (this.player.respawning === true){
                     this.player.respawning = false;
                     console.log('RESPAWN');
@@ -441,8 +464,6 @@ class scene extends Phaser.Scene {
                 this.player.player.body.setAllowGravity(true);
                 this.player.player.x = this.saveX;
                 this.player.player.y = this.saveY;
-                this.player.life = 1000;
-                this.player.power = 0;
                 this.player.player.play('idle', true);
             }});
     }
@@ -451,11 +472,13 @@ class scene extends Phaser.Scene {
         this.player.player.x = this.saveX;
         this.player.player.y = this.saveY-100;
         this.player.player.play('idle', true);
+        this.attacking = false;
     }
 
     finalBoss(player, boss){
-        this.monster.finalFight = true;
-        this.monster.life = 200;
+        window.Climax = true;
+        window.Monstrevisible = true;
+        window.MonstreVie = 200;
         this.emitBoss = this.add.particles('bossFire'); //On charge les particules à appliquer au layer
         this.emitBoss.createEmitter(this.bossFX);
         this.emitBoss.x = boss.x +60;
@@ -466,7 +489,15 @@ class scene extends Phaser.Scene {
 
 
     monsterDeath(){
-        if (this.monster.finalFight === true){
+        if (window.Climax === true){
+            window.HUDvisible = false;
+            window.Armevisible = false;
+            window.Monstrevisible = false;
+            this.attacking = false;
+            if (this.win === true){
+                this.win = false;
+                console.log('Victoire');
+            }
             this.cameras.main.startFollow(this.monster.monster, true);
             this.dieParticles.emitParticleAt(this.monster.monster.x, this.monster.monster.y);
             this.monster.monster.setVisible(false);
@@ -479,14 +510,14 @@ class scene extends Phaser.Scene {
             this.monster.monster.setVisible(false);
             this.monster.monster.disableBody();
             this.time.addEvent({
-                delay: 2000,
+                delay: 500,
                 callback: () => {
                     this.dieParticles.emitParticleAt(this.monster.monster.x, this.monster.monster.y);
                     this.monster.monster.enableBody();
                     this.monster.monster.setVisible(true);
                     this.monster.monster.x = this.monsterSpawnX;
                     this.monster.monster.y = this.monsterSpawny;
-                    this.monster.life = 50;
+                    window.MonstreVie = 50;
                 }
             });
         }
@@ -525,13 +556,9 @@ class scene extends Phaser.Scene {
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.SPACE:
                     me.player.attack();
-                    console.log('power :', me.player.power);
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.R:
                     me.player.charaSwitch();
-                    break;
-                case Phaser.Input.Keyboard.KeyCodes.E:
-                    me.player.special();
                     break;
                 case Phaser.Input.Keyboard.KeyCodes.SHIFT:
                     me.player.player.x = 18400;
@@ -564,9 +591,6 @@ class scene extends Phaser.Scene {
                 case Phaser.Input.Keyboard.KeyCodes.R:
                     me.player.switched =true;
                     break;
-                case Phaser.Input.Keyboard.KeyCodes.E:
-                    me.player.lightning = true;
-                    break;
             }
         });
     }
@@ -579,11 +603,14 @@ class scene extends Phaser.Scene {
         }
 
 
-        if (this.player.life > 1000){
-            this.player.life = 1000;
+        if (window.Vie > 2000){
+            window.Vie = 2000;
         }
-        if (this.player.power > 1000){
-            this.player.power = 1000;
+        if (window.Pouvoir > 1000){
+            window.Pouvoir = 1000;
+        }
+        if (window.MonstreVie >=200){
+            window.MonstreVie = 200;
         }
 
         /**QUELQUES CONDITIONS D'ANIMATION**/
@@ -689,16 +716,16 @@ class scene extends Phaser.Scene {
         /***CONDITION DE REGENERATION***/
         if(this.player.healing === true){
             this.player.healing = false;
-            this.player.life += 2;
-            this.player.power += 2;
+            window.Vie += 4;
+            window.Pouvoir += 2;
         }
 
         /**CONDITIONS DE VIE OU DE MORT**/
-        if (this.player.life <= 0){
+        if (window.Vie <= 0){
             this.deathSound = true;
             this.playerDeath();
         }
-        if (this.monster.life <= 0){
+        if (window.MonstreVie <= 0){
             this.monsterDeath();
         }
 

@@ -3,12 +3,8 @@ class Player {
     constructor(scene) {
 
         this.scene = scene;
-
-        this.life = 1000;
-        this.power = 0;
-        this.reap = true;
+        Sword = true;
         this.switched = true;
-        this.lightning = true;
 
 
         this.player = this.scene.physics.add.sprite(800, 5700, 'player');
@@ -16,7 +12,6 @@ class Player {
 
         //Taille de la hitbox du Player
         this.player.body.setSize(this.player.width-70, this.player.height-10).setOffset(35, 10);
-        this.player.body.setBounce(0.2,0);
 
         /***Animations***/
         //RUN
@@ -175,7 +170,7 @@ class Player {
         this.player.setVelocityX(0);
     }
     attackPlay(){
-        if (this.reap === true) {
+        if (Sword === true) {
             this.player.play('sword', true);
         }
         else{
@@ -184,14 +179,14 @@ class Player {
     }
 
     attack(){
-        if (this.power > 0) {
-            this.power -= 20;
+        if (Pouvoir > 0) {
             this.attacking = true;
             if (this.climbing === false) {
                 if (this.player.charge === true) {
                     this.player.charge = false;
+                    window.Pouvoir -= 20;
                     this.scene.time.delayedCall(100, () => {
-                        this.hit = new Attack(this.scene, this.player.x, this.player.y, this.player.flipX, this.player.body.velocity.x, this.reap);
+                        this.hit = new Attack(this.scene, this.player.x, this.player.y, this.player.flipX, this.player.body.velocity.x);
                     });
                     this.scene.time.delayedCall(200, () => {
                         this.player.charge = true;
@@ -209,12 +204,12 @@ class Player {
         if(this.switched === true) {
             this.switched = false;
             this.switchParticles.emitParticleAt(this.player.body.x + 29, this.player.body.y + 55);
-            if (this.reap === true) {
+            if (window.Sword === true) {
                 console.log('BLADE');
-                this.reap = false;
+                window.Sword = false;
             } else {
                 console.log('REAP');
-                this.reap = true;
+                window.Sword = true;
             }
         }
     }

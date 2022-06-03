@@ -1,8 +1,7 @@
 class Attack {
-    constructor(scene, x, y, flip, speed, reap) {
+    constructor(scene, x, y, flip, speed) {
 
         this.scene = scene;
-        this.reap = reap;
         /**APPEL DU SPRITE D'ATTAQUE**/
 
         this.attack = this.scene.physics.add.sprite(x,y-30,'energy');
@@ -28,9 +27,9 @@ class Attack {
             this.attack.setVelocityX(speed + 650);
         }
 
-        if (this.reap === true){
+        if (Sword === true){
             this.attack.setVisible(false);
-            this.scene.time.delayedCall(250,()=>{
+            this.scene.time.delayedCall(200,()=>{
                 this.attack.destroy()
             });
         }
@@ -111,11 +110,11 @@ class Attack {
 
     monsterHurt(){
         this.attack.destroy();
-        if (this.reap === true){
-            this.scene.monster.life -= 10;
+        if (Sword === true){
+            window.MonstreVie -= 10;
         }
-        else if (this.reap === false){
-            this.scene.monster.life -= 6;
+        else if (Sword === false){
+            window.MonstreVie -= 6;
         }
 
         this.scene.monster.monster.setAlpha(0.3);
