@@ -26,6 +26,7 @@ class scene extends Phaser.Scene {
         this.load.image('bg1','assets/tileset/bg1_mountain.png');
         this.load.image('bg2','assets/tileset/bg2_mountain.png');
         this.load.image('bg3','assets/tileset/bg3_sky.png');
+        this.load.image('controls','assets/tileset/controls.png');
         this.load.tilemapTiledJSON('map_final','assets/maps/map_final.json');
 
         this.load.audio('kill', 'assets/sfx/kill.wav');
@@ -68,6 +69,7 @@ class scene extends Phaser.Scene {
         const bg2 = map.addTilesetImage('vindicta_bg2','bg2');
         const bg1 = map.addTilesetImage('vindicta_bg1','bg1');
         const tileset = map.addTilesetImage('vindicta_platforms', 'tiles');
+        const tuto = map.addTilesetImage('controls', 'controls');
 
         this.sky = map.createLayer('BG3', sky, 0, -5000);
         this.bg2 = map.createLayer('BG2', bg2, 0, -4500);
@@ -76,6 +78,7 @@ class scene extends Phaser.Scene {
         const grotte = map.createLayer('Grotte', tileset, 0, 0);
         const platforms = map.createLayer('Platforms', tileset, 0, 0);
         const staticObjects = map.createLayer('StaticObjects', tileset, 0, 0);
+        const controls = map.createLayer('Controls', tuto, 0, 0);
         const cache = map.createLayer('Cache', tileset, 0, 0);
         this.mapCache = cache;
         this.mapCache.visible = true;
@@ -436,7 +439,7 @@ class scene extends Phaser.Scene {
         this.attacking = false;
         this.player.respawning = true;
         if (window.Climax === true) {
-            window.MonstreVie += 2;
+            window.MonstreVie += 3;
         }
         if (this.deathSound === true && this.player.dying === true) {
             this.deathSound = false;

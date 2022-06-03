@@ -8,10 +8,11 @@ class Monster {
 
 
         this.monster = this.scene.physics.add.sprite(18368, 1280, 'aranea');
-        // this.monster.body.setSize(this.monster.width, this.monster.height+50).setOffset(0, 0);
         this.monster.body.setAllowGravity(false);
+        this.monster.setScale(1.5);
         this.monster.body.setCircle(64);
         this.monster.setFlipX(true);
+
 
         this.hurtParticles = this.scene.add.particles('die_particle');
         this.hurtParticles.createEmitter({

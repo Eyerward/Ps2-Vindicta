@@ -8,7 +8,7 @@ let gameConfig = {
         default: 'arcade',
         arcade: {
             gravity: {y: 3000},
-            //debug: true,
+            debug: true,
         },
     },
     scene: [new scene(), new HUD()]

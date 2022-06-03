@@ -111,7 +111,7 @@ class Attack {
     monsterHurt(){
         this.attack.destroy();
         if (Sword === true){
-            window.MonstreVie -= 10;
+            window.MonstreVie -= 11;
         }
         else if (Sword === false){
             window.MonstreVie -= 6;
