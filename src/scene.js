@@ -29,7 +29,10 @@ class scene extends Phaser.Scene {
         this.load.image('controls','assets/tileset/controls.png');
         this.load.tilemapTiledJSON('map_final','assets/maps/map_final.json');
 
-        this.load.audio('kill', 'assets/sfx/kill.wav');
+        this.load.audio('theme', 'assets/sfx/Vindicta1.wav');
+        this.load.audio('beginning', 'assets/sfx/beginning.wav');
+        this.load.audio('scream', 'assets/sfx/scream.wav');
+        this.load.audio('victory', 'assets/sfx/victory.wav');
     }
     create(){
         /**PRESETS DE MISE EN SCENE**/
@@ -37,11 +40,19 @@ class scene extends Phaser.Scene {
         this.deathSound = false;
         this.win = true;
 
-        this.sound = this.sound.add('kill',{
-            volume:0.5,
+        this.theme = this.sound.add('theme',{
+            volume:1,
             loop:true,
+        });
+        this.theme.play();
+        this.begin = this.sound.add('beginning',{
+            volume:0.5,
+            loop:false,
         })
-        this.sound.play()
+        this.begin.play();
+
+        this.screamAudio = this.sound.add('scream');
+        this.victoireAudio = this.sound.add('victory');
 
         //VFX PARTICLES D2J0 PRESENTES SUR LA MAP
 
@@ -482,6 +493,7 @@ class scene extends Phaser.Scene {
         window.Climax = true;
         window.Monstrevisible = true;
         window.MonstreVie = 200;
+        this.monster.monster.setScale(1.5);
         this.emitBoss = this.add.particles('bossFire'); //On charge les particules à appliquer au layer
         this.emitBoss.createEmitter(this.bossFX);
         this.emitBoss.x = boss.x +60;
@@ -499,14 +511,20 @@ class scene extends Phaser.Scene {
             this.attacking = false;
             if (this.win === true){
                 this.win = false;
+                this.theme.stop();
+                this.victoireAudio.play();
                 console.log('Victoire');
+                this.cameras.main.shake(5000, 0.05);
+                this.cameras.main.fade(5000, 1000, 1000, 1000);
+                this.time.delayedCall(5000, () => {
+                    this.victoireAudio.stop();
+                    this.scene.start('victory');
+                });
             }
             this.cameras.main.startFollow(this.monster.monster, true);
             this.dieParticles.emitParticleAt(this.monster.monster.x, this.monster.monster.y);
             this.monster.monster.setVisible(false);
             this.monster.monster.disableBody();
-            this.cameras.main.shake(1000, 0.05);
-            this.cameras.main.fade(5000, 1000, 1000, 1000);
         }
         else {
             this.dieParticles.emitParticleAt(this.monster.monster.x, this.monster.monster.y);

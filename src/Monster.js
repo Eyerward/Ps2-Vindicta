@@ -9,7 +9,6 @@ class Monster {
 
         this.monster = this.scene.physics.add.sprite(18368, 1280, 'aranea');
         this.monster.body.setAllowGravity(false);
-        this.monster.setScale(1.5);
         this.monster.body.setCircle(64);
         this.monster.setFlipX(true);
 
@@ -46,6 +45,7 @@ class Monster {
 
         if (this.onScreen === true) {
             this.onScreen = false;
+            this.scene.screamAudio.play();
             this.scene.cameras.main.shake(2000, 0.005);
         }
     }
