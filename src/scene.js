@@ -581,10 +581,6 @@ class scene extends Phaser.Scene {
                 case Phaser.Input.Keyboard.KeyCodes.R:
                     me.player.charaSwitch();
                     break;
-                case Phaser.Input.Keyboard.KeyCodes.SHIFT:
-                    me.player.player.x = 18400;
-                    me.player.player.y = 1000;
-                    break;
             }
         });
         this.input.keyboard.on('keyup', function(kevent)
