@@ -8,4 +8,4 @@ Link to my Ith.io Page : [**Here**](https://eyerward.itch.io/).
 
 To play on your **browser**, click [**Here**](https://eyerward.github.io/Ps2-Vindicta/).
 
-
+![The art is beautiful!]()
