@@ -1,7 +1,11 @@
-# Ps2-Vindicta
+# Vindicta - Platformer
+### Semestrial project of my 1st Year in ETPA.
+ ---
  
-
-Semestrial project of my 1st Year in ETPA.
 The goal was to make a 2D platformer.
 
-Here is the link of the game : https://eyerward.github.io/Ps2-Vindicta/
+Link to my Ith.io Page : [**Here**](https://eyerward.itch.io/).
+
+To play on your **browser**, click [**Here**](https://eyerward.github.io/Ps2-Vindicta/).
+
+
